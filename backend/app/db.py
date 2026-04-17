@@ -84,3 +84,60 @@ def _clear_history() -> None:
 
 async def clear_history() -> None:
     await asyncio.to_thread(_clear_history)
+
+
+# ── WSTG Results ──────────────────────────────────────────────
+
+def _get_wstg_results() -> list[dict]:
+    res = (
+        _client()
+        .table("wstg_results")
+        .select("*")
+        .order("wstg_id")
+        .execute()
+    )
+    return list(res.data or [])
+
+
+def _upsert_wstg_result(row: dict) -> None:
+    _client().table("wstg_results").upsert(row, on_conflict="wstg_id").execute()
+
+
+async def get_wstg_results() -> list[dict]:
+    return await asyncio.to_thread(_get_wstg_results)
+
+
+async def upsert_wstg_result(
+    *,
+    wstg_id: str,
+    status: str,
+    target_url: str | None = None,
+    result_summary: str | None = None,
+) -> None:
+    row = {
+        "wstg_id": wstg_id,
+        "status": status,
+        "target_url": target_url,
+        "result_summary": result_summary[:4000] if result_summary else None,
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await asyncio.to_thread(_upsert_wstg_result, row)
+
+
+# ── RAG Knowledge Search ──────────────────────────────────────
+
+def _search_wstg_kb(query_embedding: list[float], match_threshold: float, match_count: int) -> list[dict]:
+    # Gọi RPC đã định nghĩa trên Supabase
+    res = _client().rpc(
+        "match_wstg_kb",
+        {
+            "query_embedding": query_embedding,
+            "match_threshold": match_threshold,
+            "match_count": match_count
+        }
+    ).execute()
+    return list(res.data or [])
+
+async def search_wstg_kb(query_embedding: list[float], match_threshold: float = 0.5, match_count: int = 2) -> list[dict]:
+    """Tìm kiếm nội dung WSTG test case dựa trên vector ngữ nghĩa"""
+    return await asyncio.to_thread(_search_wstg_kb, query_embedding, match_threshold, match_count)

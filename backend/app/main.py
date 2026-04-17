@@ -1,5 +1,4 @@
 from contextlib import asynccontextmanager
-
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -73,6 +72,34 @@ async def history(limit: int = 200):
 async def delete_history():
     try:
         await db.clear_history()
+        return {"ok": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=_http_detail(e))
+
+
+# ── WSTG Status ──────────────────────────────────────────────
+
+class WstgStatusUpdate(BaseModel):
+    wstg_id: str
+    status: str  # "not_started" | "pass" | "issue"
+    target_url: str | None = None
+    result_summary: str | None = None
+
+
+@app.get("/api/wstg-status")
+async def get_wstg_status():
+    return await db.get_wstg_results()
+
+
+@app.put("/api/wstg-status")
+async def update_wstg_status(body: WstgStatusUpdate):
+    try:
+        await db.upsert_wstg_result(
+            wstg_id=body.wstg_id,
+            status=body.status,
+            target_url=body.target_url,
+            result_summary=body.result_summary,
+        )
         return {"ok": True}
     except Exception as e:
         raise HTTPException(status_code=500, detail=_http_detail(e))

