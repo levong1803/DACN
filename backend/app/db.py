@@ -40,6 +40,18 @@ def _select_history(limit: int) -> list[dict]:
     )
     return list(res.data or [])
 
+def _select_history_by_session(session_id: str, limit: int) -> list[dict]:
+    res = (
+        _client()
+        .table("command_log")
+        .select("id, created_at, session_id, role, content, tool_name, tool_args, tool_result, meta, wstg_id")
+        .eq("session_id", session_id)
+        .order("id", desc=True)
+        .limit(limit)
+        .execute()
+    )
+    return list(res.data or [])
+
 
 def _ping_table() -> None:
     _client().table("command_log").select("id").limit(1).execute()
@@ -58,6 +70,7 @@ async def log_entry(
     tool_name: str | None = None,
     tool_args: dict | None = None,
     tool_result: str | None = None,
+    wstg_id: str | None = None,
     meta: dict | None = None,
 ) -> None:
     created = datetime.now(timezone.utc).isoformat()
@@ -69,6 +82,7 @@ async def log_entry(
         "tool_name": tool_name,
         "tool_args": json.dumps(tool_args, ensure_ascii=False) if tool_args is not None else None,
         "tool_result": tool_result,
+        "wstg_id": wstg_id,
         "meta": json.dumps(meta, ensure_ascii=False) if meta is not None else None,
     }
     await asyncio.to_thread(_insert_row, row)
@@ -77,6 +91,9 @@ async def log_entry(
 async def list_history(limit: int = 200) -> list[dict]:
     return await asyncio.to_thread(_select_history, limit)
 
+async def list_history_by_session(session_id: str, limit: int = 200) -> list[dict]:
+    return await asyncio.to_thread(_select_history_by_session, session_id, limit)
+
 
 def _clear_history() -> None:
     _client().table("command_log").delete().gt("id", -1).execute()
@@ -84,6 +101,19 @@ def _clear_history() -> None:
 
 async def clear_history() -> None:
     await asyncio.to_thread(_clear_history)
+
+
+def _list_wstg_logs(wstg_id: str, session_id: str | None = None) -> list[dict]:
+    query = _client().table("command_log").select("*").eq("wstg_id", wstg_id)
+    if session_id:
+        query = query.eq("session_id", session_id)
+    res = query.order("id").execute()
+    return list(res.data or [])
+
+
+async def list_wstg_logs(wstg_id: str, session_id: str | None = None) -> list[dict]:
+    """Lấy danh sách các tool đã chạy cho một mục WSTG cụ thể"""
+    return await asyncio.to_thread(_list_wstg_logs, wstg_id, session_id)
 
 
 # ── WSTG Results ──────────────────────────────────────────────

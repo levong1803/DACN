@@ -34,6 +34,8 @@ from pentest_mcp_tools import (
     zap_scan,
     reconng_scan,
     padbuster_scan,
+    curl_authenticated_check as curl_auth_check,
+    jwt_decode_token,
 )
 
 mcp = FastMCP("Demo Pentest Tools")
@@ -157,6 +159,19 @@ def reconng_osint(domain: str, module: str = "recon/domains-hosts/hackertarget")
 def padbuster_oracle(url: str, encrypted_sample: str, block_size: int = 8) -> str:
     """Kiểm tra lỗ hổng Padding Oracle trên mã hóa CBC. Cần URL chứa encrypted value và mẫu encrypted_sample để thử."""
     return padbuster_scan(url, encrypted_sample, block_size)
+
+
+@mcp.tool()
+def curl_authenticated_check(url: str, login_url: str = "", email: str = "admin@juice-sh.op", password: str = "admin123", method: str = "GET") -> str:
+    """Login tự động vào ứng dụng web (mặc định Juice Shop) → lấy JWT token → gửi request có auth tới endpoint mục tiêu. Dùng để kiểm tra IDOR, Authorization bypass, Session management trên các endpoint yêu cầu đăng nhập."""
+    return curl_auth_check(url, login_url, email, password, method)
+
+
+@mcp.tool()
+def jwt_decode_tool(token: str) -> str:
+    """Giải mã chuỗi JSON Web Token (JWT) Base64Url sang dạng JSON có cấu trúc rõ ràng để phân tích tĩnh các claims trong Header và Payload (phục vụ WSTG-SESS-10 kiểm tra lộ lọt thông tin nhạy cảm, phân quyền). Không cần chữ ký bí mật."""
+    return jwt_decode_token(token)
+
 
 
 if __name__ == "__main__":

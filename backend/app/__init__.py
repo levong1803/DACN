@@ -1,1 +1,0 @@
-# Penetration testing agent MVP
