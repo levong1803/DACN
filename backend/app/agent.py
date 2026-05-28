@@ -121,6 +121,7 @@ SYSTEM = """Bạn là chuyên gia Pentester tuân thủ OWASP WSTG.
 [CONCLUSION]: PASS hoặc ISSUE hoặc NEEDS_REVIEW
 [SUMMARY]: Tóm tắt kỹ thuật chi tiết"""
 
+
 # Endpoint hints cho từng nhóm WSTG 
 ENDPOINT_HINTS = {
     "INPV": """[GỢI Ý ENDPOINT - Input Validation]:
@@ -279,6 +280,7 @@ async def _run_with_mcp(client: GeminiNativeClient, user_message: str, sid: str,
                         # Loại bỏ null bytes — PostgreSQL không chấp nhận \u0000 trong text
                         res = res.replace('\x00', '')
                         tools_used.append(f"{name}({', '.join(f'{k}={v}' for k,v in args.items())})")
+                        
                         await db.log_entry(role="tool", session_id=sid, tool_name=name, tool_args=args, tool_result=res[:30000], wstg_id=wstg_id)
                         # === RECON CACHE: Lưu kết quả recon (chỉ lưu 1 lần, có rồi thì skip) ===
                         try:

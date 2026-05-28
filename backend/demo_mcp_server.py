@@ -173,7 +173,6 @@ def jwt_decode_tool(token: str) -> str:
     return jwt_decode_token(token)
 
 
-
 if __name__ == "__main__":
     mcp.run()
 
