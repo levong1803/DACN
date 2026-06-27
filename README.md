@@ -197,5 +197,5 @@ Khi trận đánh kết thúc, hệ thống sẽ tự động tổng hợp và h
 ---
 
 <div align="center">
-  <sub>Đồ án tốt nghiệp — Phát triển bởi <b>Lê Vòng</b></sub>
+  <sub>Đồ án chuyên ngành — Phát triển bởi <b>Lê Vọng</b></sub>
 </div>
