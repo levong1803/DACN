@@ -92,6 +92,14 @@ source venv/bin/activate        # Linux/WSL
 pip install -r requirements.txt
 ```
 
+**Tạo Cơ sở dữ liệu Supabase:**
+Người dùng mới cần khởi tạo các bảng CSDL trước khi chạy:
+1. Đăng ký tài khoản miễn phí tại [Supabase](https://supabase.com/).
+2. Tạo Project mới, vào phần **SQL Editor** trên thanh menu trái.
+3. Mở file `backend/supabase_schema.sql` trong dự án này, copy toàn bộ nội dung và dán vào SQL Editor.
+4. Nhấn **Run** để tự động tạo 3 bảng (`wstg_kb`, `command_log`, `wstg_results`) và hàm tìm kiếm Vector RAG.
+5. Vào **Project Settings** → **API** để lấy URL và Service Role Key điền vào file `.env` bên dưới.
+
 **Tạo file `.env`** trong thư mục `backend/`:
 ```env
 # === Supabase (Vector Database cho RAG) ===
