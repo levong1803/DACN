@@ -99,6 +99,7 @@ Người dùng mới cần khởi tạo các bảng CSDL trước khi chạy:
 3. Mở file `backend/supabase_schema.sql` trong dự án này, copy toàn bộ nội dung và dán vào SQL Editor.
 4. Nhấn **Run** để tự động tạo 3 bảng (`wstg_kb`, `command_log`, `wstg_results`) và hàm tìm kiếm Vector RAG.
 5. Vào **Project Settings** → **API** để lấy URL và Service Role Key điền vào file `.env` bên dưới.
+6. Mở Terminal, chạy lệnh `python seed_rag.py` trong thư mục `backend/` để hệ thống tự động nhúng (embed) 105 kịch bản OWASP vào Vector Database.
 
 **Tạo file `.env`** trong thư mục `backend/`:
 ```env
