@@ -151,16 +151,37 @@ npm run dev
 
 ---
 
-## 6. Hướng dẫn Sử dụng
+## 6. Hướng dẫn Sử dụng Chi tiết
 
-| Bước | Thao tác |
-|------|----------|
-| **1** | Mở trình duyệt → truy cập `http://localhost:5173` |
-| **2** | Nhập URL mục tiêu vào thanh trên cùng: `http://localhost:13000` |
-| **3** | Panel trái: chọn kịch bản cần test (VD: tick `WSTG-INPV-05 - SQL Injection`) |
-| **4** | Nhấn nút **Run Selected Tests** |
-| **5** | Theo dõi AI tác chiến realtime ở khung giữa: Planner ra lệnh → Recon đi dò → Exploit tung đòn |
-| **6** | Xem kết quả ở panel phải: **PASS** (an toàn) · **ISSUE** (có lỗ hổng) · **NEEDS REVIEW** (cần xem lại) |
+Để khai thác tối đa sức mạnh của hệ thống AI Pentest, bạn hãy làm theo luồng thao tác chuẩn sau đây:
+
+### Bước 1: Khởi tạo Phiên làm việc
+1. Mở trình duyệt Web (khuyến nghị Chrome/Edge) và truy cập vào **`http://localhost:5173`**.
+2. Tại thanh địa chỉ (Target URL) nằm ở góc trên cùng, hãy nhập chính xác đường dẫn của ứng dụng mục tiêu bạn muốn kiểm thử. 
+   - Ví dụ: Nhập `http://localhost:13000` nếu bạn đang chạy Juice Shop.
+   - *Lưu ý: Không nên test các trang web thực tế trên Internet nếu bạn chưa có sự cho phép (Bất hợp pháp).*
+
+### Bước 2: Lựa chọn Chiến thuật Kiểm thử (Bảng điều khiển bên trái)
+- Bảng điều khiển này chứa toàn bộ 105 kịch bản phân loại theo chuẩn OWASP (như INFO: Dò quét thông tin, CONF: Lỗi cấu hình, INPV: Lỗi nhập liệu...).
+- **Tìm kiếm nhanh:** Bạn có thể gõ từ khóa như `SQL`, `XSS`, `Admin` vào thanh tìm kiếm để lọc nhanh kịch bản.
+- **Chọn kịch bản:** Bạn có thể tick vào một ô vuông duy nhất (ví dụ: `WSTG-INPV-05 Testing for SQL Injection`) để test lẻ, hoặc nhấn nút **"Run Group"** ở đầu mỗi nhóm để AI chạy liên hoàn toàn bộ nhóm đó.
+
+### Bước 3: Phát lệnh Tấn công
+- Sau khi đã chọn xong kịch bản, bạn kéo xuống dưới cùng và nhấn nút **"Run Selected Tests"**.
+- Lúc này, Hệ thống Đa tác tử (Multi-Agent) sẽ chính thức được đánh thức.
+
+### Bước 4: Theo dõi Radar Tác chiến (Khung màn hình trung tâm)
+Đây là màn hình Terminal giả lập hiển thị suy nghĩ (Thought Process) của AI theo thời gian thực:
+- Đầu tiên, bạn sẽ thấy **Planner Agent** đọc luật từ hệ thống RAG và lên kế hoạch.
+- Tiếp theo, nó sẽ ủy quyền cho **Recon Agent**. Bạn sẽ thấy các dòng log báo cáo Recon đang chạy lệnh `nmap` hoặc `dirb` để tìm API/thư mục ẩn.
+- Nếu tìm thấy điểm yếu, Planner sẽ gọi **Exploit Agent**. Lúc này màn hình sẽ chạy các lệnh tấn công hạng nặng (như `sqlmap` bắn payload).
+- Quá trình này diễn ra hoàn toàn tự động, bạn giống như một người Chỉ huy ngồi xem lính của mình đi đánh trận.
+
+### Bước 5: Đọc Báo cáo Cuối cùng (Bảng điều khiển bên phải)
+Khi trận đánh kết thúc, hệ thống sẽ tự động tổng hợp và hiển thị kết quả sang cột bên phải:
+- 🟢 **PASS (An toàn):** Công cụ đã quét cạn kiệt các trường hợp nhưng không tìm thấy lỗi.
+- 🔴 **ISSUE (Có lỗ hổng):** AI đã khai thác thành công. Nếu bấm mở rộng ra, bạn sẽ thấy rõ Payload (đoạn mã độc) nào đã được AI sử dụng để xuyên thủng hệ thống.
+- 🟡 **NEEDS REVIEW (Cần xem xét):** AI nghi ngờ có lỗi (ví dụ trang web trả về HTTP 500) nhưng nó không đủ bằng chứng chắc chắn 100%. Tác tử Verifier đã dán nhãn này để gọi con người vào kiểm tra thủ công.
 
 ---
 
