@@ -1,0 +1,91 @@
+\chapter{Thiết kế hệ thống}
+
+\section{Kiến trúc tổng thể}
+Hệ thống được thiết kế theo mô hình Client - Server kết hợp với kiến trúc vi dịch vụ thông qua giao thức MCP, bao gồm ba tầng chính:
+\begin{itemize}
+    \item \textbf{Tầng Giao diện:} Ứng dụng Web đơn trang được xây dựng bằng React. Tầng này chịu trách nhiệm hiển thị giao diện tương tác, danh sách 105 kịch bản WSTG, theo dõi tiến trình chạy và hiển thị báo cáo tổng hợp.
+    \item \textbf{Tầng Điều khiển:} Đóng vai trò là "Bộ nội" trung tâm, được phát triển trên nền tảng FastAPI. Tầng này xử lý toàn bộ logic hệ thống bao gồm: quản lý API key, truy vấn cơ sở dữ liệu Supabase, điều phối hệ thống Đa tác tử, thực hiện RAG, và duy trì Đồ thị tri thức động.
+    \item \textbf{Tầng Thực thi Công cụ:} Một tiến trình con độc lập giao tiếp với tầng điều khiển qua chuẩn \textit{stdio}. Tầng này chứa các tệp nhị phân của công cụ rà quét, như Nmap, SQLMap, và các tập lệnh Python để bao bọc, giới hạn thời gian thực thi và cắt ngắn kết quả trả về.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/architecture_diagram.png}
+    \caption{Sơ đồ kiến trúc tổng thể của hệ thống}
+    \label{fig:architecture}
+\end{figure}
+
+Luồng dữ liệu tổng quát diễn ra như sau: Người dùng phát lệnh từ Frontend $\rightarrow$ Backend tiếp nhận và gọi RAG để lấy ngữ cảnh $\rightarrow$ Backend cấp ngữ cảnh cho Agent $\rightarrow$ Agent suy luận và gọi công cụ qua MCP Bridge $\rightarrow$ MCP Server chạy công cụ và trả kết quả $\rightarrow$ Backend phân tích, cập nhật DKG và trả báo cáo về Frontend.
+
+\section{Thiết kế hệ thống Đa tác tử}
+Hệ thống phá vỡ giới hạn của mô hình đơn tác tử bằng cách triển khai 4 tác tử có vai trò phân cấp nghiêm ngặt:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/multi_agent_flow.png}
+    \caption{Sơ đồ tương tác phân cấp trong hệ thống Đa tác tử}
+    \label{fig:multi_agent}
+\end{figure}
+
+\subsection{Tác tử Chỉ huy}
+Tác tử Chỉ huy đóng vai trò đầu não của hệ thống. 
+\begin{itemize}
+    \item \textbf{Đầu vào:} Nhận tri thức hàn lâm từ mô-đun RAG và bề mặt tấn công hiện tại từ mô-đun DKG.
+    \item \textbf{Hành vi:} Tác tử Chỉ huy tuyệt đối không có quyền gọi trực tiếp bất kỳ công cụ nào. Nó chỉ có nhiệm vụ lập kế hoạch gồm 1 đến 3 bước. Mỗi bước phải chỉ định rõ sẽ giao cho tác tử cấp dưới nào thực thi, bằng cú pháp \texttt{[ASSIGN: RECON]} hoặc \texttt{[ASSIGN: EXPLOIT]}.
+    \item \textbf{Quyết định kết thúc:} Sau khi nhận báo cáo từ cấp dưới, Tác tử Chỉ huy tổng hợp và đưa ra đánh giá cuối cùng.
+\end{itemize}
+
+\subsection{Tác tử Trinh sát}
+Tác tử Trinh sát hoạt động như một chuyên viên thu thập tình báo.
+\begin{itemize}
+    \item \textbf{Quyền hạn:} Chỉ được cấp phép sử dụng các công cụ thăm dò an toàn, Nmap, Dirb, Curl, Whatweb, Nikto, DNSRecon.
+    \item \textbf{Hành vi:} Nó nhận lệnh từ Chỉ huy, thực thi công cụ, phân tích đầu ra thô, có thể dài hàng ngàn dòng, và tóm tắt lại thành 2-3 câu ngắn gọn để báo cáo ngược về Chỉ huy.
+\end{itemize}
+
+\subsection{Tác tử Khai thác}
+Tác tử Khai thác là tác tử mang tính "phá hoại", đóng vai trò như một chuyên gia khai thác lỗ hổng.
+\begin{itemize}
+    \item \textbf{Quyền hạn:} Được trang bị các công cụ vũ khí hạng nặng, SQLMap, Commix, Hydra, WFuzz, ZAP.
+    \item \textbf{Hành vi:} Nó luôn ở trạng thái "ngủ" và chỉ thức dậy khi Chỉ huy cung cấp chính xác "tọa độ mục tiêu", ví dụ: URL kèm tham số cụ thể đã được Trinh sát xác nhận. 
+\end{itemize}
+
+\subsection{Tác tử Xác thực}
+Nhằm triệt tiêu hiện tượng dương tính giả của LLM, Tác tử Xác thực đóng vai trò trọng tài. Khi Tác tử Khai thác báo cáo đã khai thác thành công, Tác tử Xác thực sẽ đọc lại nhật ký công cụ và đánh giá độc lập xem lỗ hổng đó là \texttt{TRUE\_POSITIVE} hay \texttt{FALSE\_POSITIVE} kèm độ tin cậy.
+
+\section{Thiết kế mô-đun RAG}
+Mô-đun RAG được thiết kế để cấp phát hướng dẫn OWASP WSTG chuẩn xác cho Chỉ huy.
+\begin{itemize}
+    \item \textbf{Cơ sở dữ liệu Vector:} Sử dụng bảng \texttt{wstg\_kb} trên Supabase PostgreSQL với tiện ích \textit{pgvector} lưu trữ biểu diễn 768 chiều.
+    \item \textbf{Quy trình tìm kiếm:} Backend gọi hàm RPC \texttt{match\_wstg\_kb} tính khoảng cách Cosine. Ngưỡng tương đồng tối thiểu được đặt ở 0.5. Hệ thống trích xuất tối đa 2 phân đoạn phù hợp nhất.
+    \item \textbf{Mô-đun tăng cường:} Ngoài văn bản tĩnh, mô-đun này còn linh hoạt bơm thêm các "Gợi ý tấn công" dựa trên công nghệ vừa phát hiện. Ví dụ: Nếu DKG báo cáo đang đối mặt với cơ sở dữ liệu MySQL, mô-đun sẽ chèn chỉ thị \textit{"Hãy thử các payload UNION SELECT, SLEEP() của MySQL"}.
+\end{itemize}
+
+\section{Thiết kế Đồ thị tri thức động}
+Để duy trì trạng thái và kết quả thu được xuyên suốt quá trình quét 105 bài kiểm thử, hệ thống áp dụng Đồ thị tri thức động.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/dkg_example.png}
+    \caption{Mô hình biểu diễn dữ liệu của Đồ thị tri thức động}
+    \label{fig:dkg}
+\end{figure}
+\begin{itemize}
+    \item \textbf{Đỉnh:} Lưu trữ các thực thể gồm: Host, Port, Service, Technology, Endpoint, Vulnerability.
+    \item \textbf{Cạnh:} Biểu diễn quan hệ: \textit{has\_port}, \textit{runs\_service}, \textit{uses\_tech}, \textit{has\_endpoint}.
+    \item \textbf{Cơ chế cập nhật:} Mỗi khi công cụ quét, như Nmap, chạy xong, bộ phân tích tĩnh sử dụng Biểu thức chính quy trích xuất dữ liệu, tạo đỉnh mới hoặc cập nhật thông tin cho đỉnh cũ, đồng thời thiết lập quan hệ.
+    \item \textbf{Tạo bề mặt tấn công:} Trước mỗi lượt quyết định, Chỉ huy gọi hàm \texttt{generate\_attack\_surface} để chuyển hóa đồ thị thành đoạn văn bản mô tả toàn cảnh, ví dụ: "Đã phát hiện IP X mở cổng 80 chạy Apache và có 3 đường dẫn ẩn".
+\end{itemize}
+
+\section{Thiết kế Bộ đệm trinh sát}
+Chạy lại các công cụ quét chậm như Nmap hay Dirb cho mỗi bài kiểm thử là không khả thi. Hệ thống thiết kế Bộ đệm trinh sát chia sẻ theo nguyên lý "Ghi một lần - Đọc nhiều lần".
+\begin{itemize}
+    \item \textbf{Chặn lệnh gọi ở tầng MCP:} Khi AI sinh lệnh gọi hàm (ví dụ \texttt{nmap\_scan}), hệ thống sẽ chặn lệnh này lại, kiểm tra khóa (Tên công cụ + Tham số) trong bộ đệm.
+    \item \textbf{Phản hồi lập tức:} Nếu đã tồn tại kết quả, hệ thống ném thẳng dữ liệu từ bộ nhớ đệm về cho AI trong thời gian 0 giây, hoàn toàn bỏ qua việc gọi tiến trình con.
+\end{itemize}
+
+\section{Thiết kế Tầng giao tiếp MCP và An toàn hệ thống}
+\begin{itemize}
+    \item \textbf{Giao tiếp Stdio:} MCP Bridge chuyển định dạng công cụ MCP sang chuẩn gọi hàm của Gemini, quản lý luồng \textit{stdin/stdout}.
+    \item \textbf{Danh sách trắng máy chủ:} Để ngăn AI tấn công các hệ thống ngoài phạm vi, lớp bảo vệ mức dưới cùng chỉ cho phép thực thi công cụ nếu địa chỉ máy chủ là \texttt{localhost} hoặc thuộc mạng nội bộ cục bộ, trừ khi biến môi trường \texttt{PENTEST\_ALLOW\_ANY} được kích hoạt thủ công bởi người dùng.
+    \item \textbf{Cắt ngắn kết quả hai tầng:} Hệ thống áp dụng cơ chế cắt ngắn đầu ra qua hai tầng xử lý tuần tự. Ở tầng thứ nhất tại lớp MCP, đầu ra thô của công cụ được giới hạn tối đa 80.000 ký tự bằng cách loại bỏ phần cuối nếu vượt ngưỡng. Ở tầng thứ hai tại lớp tác tử, nếu kết quả sau tầng một vẫn vượt quá 15.000 ký tự, hệ thống chỉ giữ lại 6.000 ký tự đầu và 6.000 ký tự cuối, loại bỏ phần giữa nhằm bảo vệ cửa sổ ngữ cảnh của mô hình ngôn ngữ.
+\end{itemize}

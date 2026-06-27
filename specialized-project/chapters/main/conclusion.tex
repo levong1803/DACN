@@ -1,0 +1,20 @@
+\chapter*{\centering\Large{KẾT LUẬN}}
+\addcontentsline{toc}{chapter}{Kết luận}
+
+\section*{Kết quả đạt được}
+Qua quá trình nghiên cứu, thiết kế và hiện thực, đồ án đã hoàn thành mục tiêu xây dựng một hệ thống đa tác tử AI tự động hóa kiểm thử xâm nhập ứng dụng Web. Các đóng góp và kết quả chính đạt được bao gồm:
+\begin{enumerate}
+    \item \textbf{Tự động hóa chuẩn OWASP WSTG v4.2:} Hệ thống đã bao phủ thành công toàn bộ 105 kịch bản kiểm thử bảo mật. Bằng việc kết hợp kỹ thuật Retrieval-Augmented Generation, RAG, và cơ sở dữ liệu vector Supabase, hệ thống ép AI phải tuân thủ nghiêm ngặt theo các phương pháp luận chuyên ngành, loại bỏ tình trạng suy luận tùy tiện và "ảo giác".
+    \item \textbf{Kiến trúc Đa tác tử an toàn:} Đồ án giải quyết rủi ro tiềm tàng của AI trong an ninh mạng bằng cách phân quyền hệ thống thành các tác tử chuyên biệt: Planner, Recon Agent, Exploit Agent và Verifier. Tác tử Xác thực hoạt động như một trọng tài độc lập, tự động kiểm chứng mọi phát hiện lỗ hổng nhằm triệt tiêu cảnh báo sai trước khi đưa ra phán quyết cuối cùng.
+    \item \textbf{Tích lũy tri thức liên tục:} Thay vì kiểm thử rời rạc, điểm sáng công nghệ lớn nhất của đề tài là việc ứng dụng Đồ thị tri thức động và Bộ đệm trinh sát. Tri thức về bề mặt tấn công của hệ thống tăng dần sau mỗi kịch bản, cho phép lấy đầu ra của bước rà quét thông tin làm đầu vào chính xác cho bước tấn công khai thác.
+    \item \textbf{Tính thực tiễn cao:} Thực nghiệm trên ứng dụng OWASP Juice Shop đã minh chứng khả năng kết hợp công cụ thực tế, qua giao thức MCP, để tìm ra hàng chục lỗ hổng nghiêm trọng như SQL Injection, XSS và lỗi cấu hình ẩn một cách hoàn toàn tự động.
+\end{enumerate}
+
+\section*{Hướng phát triển tương lai}
+Để hệ thống hoàn thiện hơn và có thể ứng dụng vào môi trường doanh nghiệp thực tế, nhóm tác giả đề xuất một số hướng phát triển tiếp theo:
+\begin{itemize}
+    \item \textbf{Tích hợp mô hình mã nguồn mở cục bộ:} Chuyển đổi từ việc sử dụng API của Google Gemini sang các mô hình chạy trực tiếp trên máy chủ cục bộ, như Llama 3, Mistral, để đáp ứng các yêu cầu khắt khe về bảo mật dữ liệu, không để lọt thông tin cấu hình ra Internet.
+    \item \textbf{Mở rộng hỗ trợ xác thực:} Nâng cấp các tác tử để có thể tự động vượt qua các phương thức xác thực phức tạp hơn như OAuth 2.0, SAML hay các luồng đăng nhập yêu cầu giải mã CAPTCHA tự động.
+    \item \textbf{Học tăng cường, Reinforcement Learning:} Đưa cơ chế học tập từ kinh nghiệm vào hệ thống. Các tác tử có thể được thưởng/phạt dựa trên tỷ lệ tìm ra lỗ hổng thành công, từ đó tự tinh chỉnh các biểu thức tấn công, payload, hiệu quả hơn cho các lần quét sau.
+    \item \textbf{Tích hợp quy trình CI/CD:} Đóng gói hệ thống thành một pipeline tự động để tích hợp vào các hệ thống DevOps, như GitLab CI, Jenkins,, giúp quét mã nguồn trực tiếp, DAST, ngay mỗi khi lập trình viên cập nhật ứng dụng.
+\end{itemize}

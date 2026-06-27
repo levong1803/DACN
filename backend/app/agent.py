@@ -8,7 +8,7 @@ from .config import settings, api_key_pool
 from . import db
 from .mcp_bridge import call_mcp_tool, parse_tool_arguments, with_mcp_session
 from .prompt_logger import log_prompt, log_tool_call, log_llm_response
-from .recon_cache import save_recon, get_recon_summary
+from .recon_cache import save_recon, get_recon_summary, get_cached_tool_result
 
 class GeminiNativeClient:
     def __init__(self, api_key: str | None = None):
@@ -66,7 +66,7 @@ class GeminiNativeClient:
                 current_key = self._get_current_key()
                 url = f"{self.base_url}/models/{model}:generateContent?key={current_key}"
                 resp = await client.post(url, headers=self.headers, json=body)
-                if resp.status_code in (403, 429, 503):
+                if resp.status_code in (401, 403, 429, 500, 503):
                     # Xoay sang key khác NGAY LẬP TỨC thay vì chờ lâu
                     reason = f"generate {resp.status_code} (attempt {attempt+1}/{max_attempts})"
                     api_key_pool.rotate(reason=reason)
@@ -167,7 +167,6 @@ async def run_chat(user_message: str, session_id: str | None = None, wstg_id: st
     sid = session_id or str(uuid.uuid4())
     await db.log_entry(role="user", content=user_message, session_id=sid, wstg_id=wstg_id)
     if not api_key_pool.current_key: return "Thiếu API KEY.", sid
-
     client = GeminiNativeClient()  # Tự động lấy key từ pool
     system_prompt = SYSTEM
     
@@ -191,7 +190,14 @@ async def run_chat(user_message: str, session_id: str | None = None, wstg_id: st
                 sim_str = f" (similarity: {sim:.2f})" if isinstance(sim, (int, float)) else ""
                 rag_parts.append(f"--- {label}{sim_str} ---\n{content}")
             _rag_context = "\n\n".join(rag_parts)
-            system_prompt += "\n\n[HỆ THỐNG RAG]\n" + _rag_context
+            
+            # [CONTEXT-AWARE RAG ENHANCEMENT]
+            from .recon_cache import _dkg
+            from .rag_enhancer import RAGEnhancer
+            enhancer = RAGEnhancer(_dkg)
+            enriched_rag = enhancer.enrich_prompt(wstg_id or "", _rag_context)
+            
+            system_prompt += "\n\n[HỆ THỐNG RAG - CONTEXT AWARE]\n" + enriched_rag
     except Exception as e:
         print(f"RAG Error (non-fatal, AI sẽ chạy không có RAG): {e}")
 
@@ -224,6 +230,7 @@ async def run_chat(user_message: str, session_id: str | None = None, wstg_id: st
             system_prompt += f"\n\n[CHAIN OF EVIDENCE - {len(recent)} bằng chứng]\n" + _chain_evidence
 
     # === LOG PROMPT GỬI LÊN LLM ===
+    from .prompt_logger import log_prompt
     log_prompt(
         wstg_id=wstg_id,
         session_id=sid,
@@ -236,6 +243,18 @@ async def run_chat(user_message: str, session_id: str | None = None, wstg_id: st
         round_num=0,
         direction="TO_LLM",
     )
+
+    from .config import settings
+    if settings.multi_agent_enabled and wstg_id:
+        from .multi_agent import PlannerAgent
+        from .recon_cache import _dkg
+        from .rag_enhancer import RAGEnhancer
+        enhancer = RAGEnhancer(_dkg)
+        planner = PlannerAgent(client, sid, _dkg, enhancer)
+        final_text = await planner.plan_and_execute(user_message, wstg_id, _rag_context or "")
+        # Log kết quả cuối cùng của multi-agent vào DB (để hiển thị trong tab Chi tiết)
+        await db.log_entry(role="assistant", content=final_text, session_id=sid, wstg_id=wstg_id)
+        return final_text, sid
 
     if settings.mcp_enabled: return await _run_with_mcp(client, user_message, sid, system_prompt, wstg_id)
     return await _run_llm_only(client, user_message, sid, system_prompt, wstg_id)
@@ -251,8 +270,12 @@ async def _run_llm_only(client: GeminiNativeClient, user_message: str, sid: str,
     await db.log_entry(role="assistant", content=text, session_id=sid, wstg_id=wstg_id)
     return text, sid
 
-async def _run_with_mcp(client: GeminiNativeClient, user_message: str, sid: str, system_prompt: str, wstg_id: str | None = None) -> tuple[str, str]:
+async def _run_with_mcp(client: GeminiNativeClient, user_message: str, sid: str, system_prompt: str, wstg_id: str | None = None, allowed_tools: set | None = None) -> tuple[str, str]:
     async def body(session, openai_tools: list[dict]) -> tuple[str, str]:
+        # === TOOL FILTERING: Chỉ truyền tools được phép cho agent ===
+        if allowed_tools is not None:
+            openai_tools = [t for t in openai_tools if t["function"]["name"] in allowed_tools]
+            print(f"[TOOL FILTER] Filtered to {len(openai_tools)} tools: {[t['function']['name'] for t in openai_tools]}")
         tool_names = [t["function"]["name"] for t in openai_tools]
         messages = [
             {"role": "user", "content": system_prompt},
@@ -276,19 +299,29 @@ async def _run_with_mcp(client: GeminiNativeClient, user_message: str, sid: str,
                     messages.append({"role": "assistant", "content": msg.content, "tool_calls": [{"id": tc.id, "type": "function", "function": {"name": tc.function.name, "arguments": tc.function.arguments}} for tc in msg.tool_calls], "_raw_parts": getattr(msg, "_raw_parts", None), "_role": getattr(msg, "_role", None)})
                     for tc in msg.tool_calls:
                         name, args = tc.function.name, parse_tool_arguments(tc.function.arguments or "")
-                        res = await call_mcp_tool(session, name, args)
-                        # Loại bỏ null bytes — PostgreSQL không chấp nhận \u0000 trong text
-                        res = res.replace('\x00', '')
-                        tools_used.append(f"{name}({', '.join(f'{k}={v}' for k,v in args.items())})")
                         
-                        await db.log_entry(role="tool", session_id=sid, tool_name=name, tool_args=args, tool_result=res[:30000], wstg_id=wstg_id)
-                        # === RECON CACHE: Lưu kết quả recon (chỉ lưu 1 lần, có rồi thì skip) ===
-                        try:
-                            saved = save_recon(tool_name=name, tool_args=args, tool_result=res)
-                            if saved:
-                                print(f"[RECON CACHE] New recon saved from {wstg_id}: {name}")
-                        except Exception as _cache_err:
-                            print(f"[RECON CACHE] Save error (non-fatal): {_cache_err}")
+                        # === RECON CACHE INTERCEPTION ===
+                        cached_res = get_cached_tool_result(name, args)
+                        if cached_res is not None:
+                            res = cached_res
+                            print(f"[RECON CACHE] Reusing cached result for {name}")
+                            tools_used.append(f"{name}({', '.join(f'{k}={v}' for k,v in args.items())}) [CACHED]")
+                            # Thêm chữ [CACHED] vào tên tool để UI hiển thị cho User biết
+                            await db.log_entry(role="tool", session_id=sid, tool_name=f"{name} [CACHED]", tool_args=args, tool_result=res[:30000], wstg_id=wstg_id)
+                        else:
+                            res = await call_mcp_tool(session, name, args)
+                            # Loại bỏ null bytes — PostgreSQL không chấp nhận \u0000 trong text
+                            res = res.replace('\x00', '')
+                            tools_used.append(f"{name}({', '.join(f'{k}={v}' for k,v in args.items())})")
+                            
+                            await db.log_entry(role="tool", session_id=sid, tool_name=name, tool_args=args, tool_result=res[:30000], wstg_id=wstg_id)
+                            # === RECON CACHE: Lưu kết quả recon (chỉ lưu 1 lần, có rồi thì skip) ===
+                            try:
+                                saved = save_recon(tool_name=name, tool_args=args, tool_result=res)
+                                if saved:
+                                    print(f"[RECON CACHE] New recon saved from {wstg_id}: {name}")
+                            except Exception as _cache_err:
+                                print(f"[RECON CACHE] Save error (non-fatal): {_cache_err}")
                         # Log tool call
                         log_tool_call(
                             wstg_id=wstg_id, session_id=sid, round_num=round_num,

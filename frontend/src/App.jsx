@@ -199,6 +199,13 @@ export default function App() {
         break;
       }
 
+      // Bỏ qua test đã deprecated (merged vào test khác)
+      if (allTests[i].deprecated) {
+        setRunAllLog(prev => [...prev, { wstgId: allTests[i].wstgId, status: "info", msg: "Đã merged vào test khác, bỏ qua" }]);
+        setRunAllProgress({ current: i + 1, total: allTests.length, currentTest: allTests[i].wstgId });
+        continue;
+      }
+
       // B\u1ecf qua test \u0111\u00e3 pass ho\u1eb7c issue
       const existing = wstgStatus[allTests[i].wstgId]?.status;
       if (existing === "pass" || existing === "issue") {
@@ -288,7 +295,7 @@ export default function App() {
       return;
     }
     try {
-      const logs = await fetchJSON(`/api/wstg-logs?wstg_id=${wstgId}&session_id=${sessionId || ""}`);
+      const logs = await fetchJSON(`/api/wstg-logs?wstg_id=${wstgId}`);
       setWstgDetails(p => ({ ...p, [wstgId]: logs }));
       setShowLogs(p => ({ ...p, [wstgId]: true }));
     } catch (e) {

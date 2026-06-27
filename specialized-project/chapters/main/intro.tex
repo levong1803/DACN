@@ -1,0 +1,52 @@
+\chapter*{\centering\Large{MỞ ĐẦU}}
+\addcontentsline{toc}{chapter}{Mở đầu}
+
+\section*{Lý do chọn đề tài}
+Sự bùng nổ của chuyển đổi số trong giai đoạn 2020-2025 đã kéo theo sự chuyển dịch của hầu hết các dịch vụ lên nền tảng Web. Cùng với sự phát triển này, số lượng và mức độ tinh vi của các cuộc tấn công mạng nhắm vào ứng dụng Web cũng gia tăng đột biến. Các hình thức tấn công như SQL Injection, Cross-Site Scripting, XSS,, leo thang đặc quyền hay lộ lọt thông tin nhạy cảm liên tục gây ra thiệt hại hàng tỷ USD mỗi năm. Trước bối cảnh đó, kiểm thử xâm nhập đã trở thành một quy trình bắt buộc nhằm phát hiện và vá các lỗ hổng bảo mật trước khi tin tặc kịp khai thác. 
+
+Tuy nhiên, quy trình kiểm thử xâm nhập thủ công hiện nay đòi hỏi nguồn nhân lực có trình độ chuyên môn cao, tiêu tốn nhiều thời gian và chi phí, gây khó khăn cho việc triển khai ở quy mô lớn hoặc tích hợp vào các vòng đời phát triển phần mềm ngắn hạn, Agile, DevOps. Mặc dù trên thị trường đã xuất hiện nhiều công cụ rà quét lỗ hổng tự động, như OWASP ZAP, Burp Suite,, các công cụ này thường hoạt động dựa trên các bộ quy tắc cố định, thiếu khả năng hiểu ngữ cảnh nghiệp vụ, dẫn đến tỷ lệ bỏ sót lỗ hổng phức tạp và tỷ lệ cảnh báo sai cao. 
+
+Gần đây, sự phát triển vượt bậc của Trí tuệ nhân tạo, AI,, đặc biệt là các mô hình ngôn ngữ lớn, LLM,, đã mở ra một hướng tiếp cận mới mẻ và đầy hứa hẹn. AI hiện nay không chỉ có khả năng đọc hiểu tài liệu kỹ thuật phức tạp mà còn có thể lập kế hoạch và trực tiếp điều khiển các công cụ tương tự như con người. Nhận thấy tiềm năng to lớn này, nhóm tác giả đã quyết định thực hiện đề tài: \textbf{"Xây dựng hệ thống đa tác tử AI tự động hóa kiểm thử xâm nhập ứng dụng Web theo chuẩn OWASP WSTG"}.
+
+\section*{Mục đích thực hiện đề tài}
+Mục đích chính của đồ án là nghiên cứu, thiết kế và hiện thực một hệ thống AI tự động hóa quy trình kiểm thử xâm nhập bảo mật cho các ứng dụng Web. Hệ thống phải tuân thủ nghiêm ngặt bộ tiêu chuẩn quốc tế OWASP Web Security Testing Guide, WSTG, phiên bản 4.2. Cụ thể, các mục tiêu bao gồm:
+\begin{itemize}
+    \item Ứng dụng kiến trúc đa tác tử nhằm phân chia nhiệm vụ lập kế hoạch, thăm dò và tấn công, mô phỏng luồng tư duy của một nhóm chuyên gia bảo mật.
+    \item Xây dựng cơ chế truy xuất tri thức, RAG, để cung cấp hướng dẫn kiểm thử chính xác từ OWASP, ngăn chặn hiện tượng "ảo giác" của AI.
+    \item Phát triển Đồ thị tri thức động, DKG, để hệ thống có khả năng ghi nhớ, liên kết bề mặt tấn công và tái sử dụng dữ liệu thăm dò cho các pha khai thác sau.
+    \item Đánh giá hiệu quả của hệ thống thông qua thực nghiệm trên một mục tiêu có lỗ hổng thực tế.
+\end{itemize}
+
+\section*{Đối tượng và phạm vi nghiên cứu}
+\textbf{Đối tượng nghiên cứu:}
+\begin{itemize}
+    \item Các ứng dụng Web hiện đại giao tiếp qua giao thức HTTP/HTTPS, đặc biệt tập trung vào các ứng dụng trang đơn, SPA.
+    \item Các mô hình ngôn ngữ lớn, tiêu biểu là mô hình Gemini 2.5 Flash của Google.
+    \item Bộ tiêu chuẩn đánh giá an toàn thông tin OWASP WSTG v4.2.
+\end{itemize}
+
+\textbf{Phạm vi nghiên cứu:}
+\begin{itemize}
+    \item Tập trung vào việc phát hiện và khai thác các lỗ hổng thuộc 12 danh mục chính của OWASP WSTG, bao gồm 105 kịch bản kiểm thử.
+    \item Môi trường thử nghiệm được giới hạn trên ứng dụng Web mô phỏng lỗ hổng OWASP Juice Shop được triển khai cục bộ qua hệ thống Docker, không thực hiện kiểm thử trên các mục tiêu bên ngoài Internet nhằm đảm bảo tính hợp pháp và an toàn.
+\end{itemize}
+
+\section*{Phương pháp nghiên cứu}
+Để đạt được các mục tiêu đề ra, đề tài áp dụng các phương pháp nghiên cứu sau:
+\begin{itemize}
+    \item \textbf{Nghiên cứu lý thuyết:} Tìm hiểu sâu về các loại hình lỗ hổng Web, quy trình kiểm thử xâm nhập tiêu chuẩn, tài liệu OWASP, lý thuyết về mô hình ngôn ngữ lớn, kiến trúc Retrieval-Augmented Generation, RAG, và hệ thống Multi-Agent.
+    \item \textbf{Phương pháp thực nghiệm:} Phân tích cấu trúc hoạt động của các công cụ kiểm thử mã nguồn mở, Nmap, SQLMap, Dirb, v.v.,, tích hợp các công cụ này vào hệ thống thông qua giao thức MCP.
+    \item \textbf{Phương pháp thiết kế và lập trình:} Xây dựng hệ thống phần mềm hoàn chỉnh bao gồm Backend, FastAPI, Python, xử lý luồng logic của AI, Database, Supabase, để lưu trữ vector ngữ cảnh, và Frontend, React, đóng vai trò làm giao diện điều khiển, hiển thị báo cáo.
+    \item \textbf{Phương pháp đánh giá:} Vận hành hệ thống chống lại môi trường OWASP Juice Shop, thu thập nhật ký các cuộc gọi API và phân tích tính logic trong chuỗi hành động tấn công của AI, đồng thời đánh giá tỷ lệ phát hiện lỗ hổng thành công.
+\end{itemize}
+
+\section*{Bố cục đồ án}
+Nội dung của đồ án được chia thành 5 chương chính:
+\begin{itemize}
+    \item \textbf{Chương 1: Tổng quan} - Trình bày bức tranh toàn cảnh về kiểm thử xâm nhập, bộ tiêu chuẩn OWASP, đánh giá các công trình nghiên cứu ứng dụng AI trong an toàn thông tin hiện có, chỉ ra các hạn chế và đề xuất giải pháp của nhóm.
+    \item \textbf{Chương 2: Cơ sở lý thuyết} - Cung cấp nền tảng lý thuyết về mô hình ngôn ngữ lớn, kỹ thuật RAG, đồ thị tri thức, kiến trúc đa tác tử, giao thức MCP và các công cụ bảo mật được sử dụng trong hệ thống.
+    \item \textbf{Chương 3: Thiết kế hệ thống} - Mô tả chi tiết kiến trúc tổng thể, sơ đồ luồng dữ liệu, thiết kế Đồ thị tri thức động, DKG,, thiết kế cơ sở dữ liệu và cơ chế phối hợp giữa các tác tử trong hệ thống.
+    \item \textbf{Chương 4: Hiện thực hệ thống} - Trình bày quá trình cài đặt, lựa chọn công nghệ, hiện thực mã nguồn các thành phần lõi như Backend, cơ chế xoay vòng khóa API, MCP Bridge và giao diện người dùng.
+    \item \textbf{Chương 5: Thực nghiệm và đánh giá} - Trình bày chi tiết cấu hình môi trường thử nghiệm, mô tả cụ thể một số chuỗi kịch bản tấn công thực tế do hệ thống tự động thực hiện và đưa ra các đánh giá tổng hợp về hiệu quả, ưu nhược điểm của giải pháp đề xuất.
+\end{itemize}
+Cuối cùng là phần \textbf{Kết luận} nhằm tóm tắt lại các kết quả đã đạt được, đồng thời đề xuất những định hướng phát triển mở rộng trong tương lai.

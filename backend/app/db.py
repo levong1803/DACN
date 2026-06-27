@@ -4,6 +4,21 @@ from datetime import datetime, timezone
 from typing import Any
 
 from .config import settings
+import httpx
+import warnings
+
+# Tắt kiểm tra SSL toàn cục cho httpx (Fix lỗi CERTIFICATE_VERIFY_FAILED)
+original_client_init = httpx.Client.__init__
+def new_client_init(self, *args, **kwargs):
+    kwargs['verify'] = False
+    original_client_init(self, *args, **kwargs)
+httpx.Client.__init__ = new_client_init
+
+original_async_client_init = httpx.AsyncClient.__init__
+def new_async_client_init(self, *args, **kwargs):
+    kwargs['verify'] = False
+    original_async_client_init(self, *args, **kwargs)
+httpx.AsyncClient.__init__ = new_async_client_init
 
 _supabase: Any = None
 

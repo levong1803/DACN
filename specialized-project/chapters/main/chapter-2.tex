@@ -1,0 +1,93 @@
+\chapter{Cơ sở lý thuyết}
+
+\section{Mô hình ngôn ngữ lớn và Cửa sổ ngữ cảnh}
+\subsection{Khái niệm mô hình ngôn ngữ lớn, LLM,}
+Mô hình ngôn ngữ lớn là các hệ thống học máy được đào tạo trên khối lượng lớn dữ liệu văn bản nhằm hiểu và sinh ra ngôn ngữ tự nhiên \cite{gemini2023}. Kiến trúc nền tảng của các mô hình này hiện nay chủ yếu dựa trên mạng Transformer \cite{vaswani2017attention}, sử dụng cơ chế tự chú ý để nắm bắt ngữ cảnh và mối quan hệ giữa các từ trong chuỗi văn bản dài. 
+
+Trong đồ án này, mô hình Gemini của Google, cụ thể là phiên bản Gemini 2.5 Flash, được sử dụng làm lõi xử lý AI. Gemini nổi bật với khả năng xử lý đa phương thức nguyên bản và hiệu năng cao trong việc thực hiện các tác vụ suy luận logic, phân tích mã nguồn và tuân thủ các chỉ thị phức tạp.
+
+\subsection{Chức năng gọi hàm}
+Function Calling là một tính năng năng cao của các LLM hiện đại, cho phép mô hình ngôn ngữ không chỉ sinh ra văn bản thuần túy mà còn có thể định dạng đầu ra thành các cấu trúc dữ liệu JSON để gọi các hàm phần mềm bên ngoài. Nhờ tính năng này, AI có thể tương tác với cơ sở dữ liệu, gọi API, hoặc như trong đồ án này là khả năng truyền tham số điều khiển các công cụ dòng lệnh một cách tự động.
+
+\subsection{Giới hạn cửa sổ ngữ cảnh và Vấn đề Ảo giác}
+Mọi mô hình ngôn ngữ đều bị giới hạn bởi cửa sổ ngữ cảnh - số lượng từ tối đa mà mô hình có thể ghi nhớ trong một lượt hội thoại. Khi thông tin đầu vào vượt quá giới hạn này, hoặc khi có quá nhiều thông tin gây nhiễu nằm ở phần giữa ngữ cảnh, AI thường gặp phải hiện tượng ảo giác. Ảo giác là tình trạng mô hình tạo ra các câu trả lời nghe có vẻ hợp lý và tự tin nhưng thực chất hoàn toàn sai lệch thực tế. Đối với hệ thống kiểm thử bảo mật, ảo giác có thể dẫn đến việc báo cáo các lỗ hổng không tồn tại hoặc gợi ý các bước tấn công vô nghĩa.
+
+\section{Retrieval-Augmented Generation, RAG,}
+Để khắc phục hạn chế về giới hạn độ dài ngữ cảnh và giảm thiểu ảo giác, kỹ thuật RAG được đề xuất bởi Lewis và cộng sự, 2020, \cite{lewis2020rag}. RAG là phương pháp kết hợp giữa tìm kiếm truy xuất thông tin và mô hình sinh văn bản.
+
+Cơ chế hoạt động của RAG bao gồm hai bước chính:
+\begin{enumerate}
+    \item \textbf{Nhúng Vector và Truy vấn:} Toàn bộ cơ sở dữ liệu tri thức tĩnh được chạy qua mô hình nhúng để biến đổi thành các vector số học có số chiều cố định. Khi nhận được câu truy vấn từ người dùng, RAG sẽ chuyển câu truy vấn này thành một vector mới và sử dụng các thuật toán đo lường khoảng cách, phổ biến nhất là khoảng cách Cosine, Cosine Similarity,, để tìm ra các tài liệu có vector gần giống nhất trong cơ sở dữ liệu.
+
+Khoảng cách Cosine được tính theo công thức:
+\begin{equation}
+\text{similarity}(A, B) = \frac{A \cdot B}{\|A\| \|B\|} = \frac{\sum_{i=1}^{n} A_i B_i}{\sqrt{\sum_{i=1}^{n} A_i^2} \sqrt{\sum_{i=1}^{n} B_i^2}}
+\end{equation}
+
+Những tài liệu được tìm thấy này sau đó được tiêm, inject, vào ngữ cảnh của câu nhắc ban đầu trước khi gửi đến mô hình ngôn ngữ lớn. Nhờ đó, câu trả lời sinh ra không chỉ dựa trên trọng số được huấn luyện từ trước mà còn dựa trên dữ liệu thực tế và cập nhật nhất, giúp giảm thiểu đáng kể hiện tượng "ảo giác", hallucination, thường gặp ở các mô hình AI.
+    \item \textbf{Trích xuất và Sinh văn bản:} Hệ thống chọn ra K đoạn văn bản có độ tương đồng cao nhất. Các đoạn văn bản này sau đó được tiêm vào ngữ cảnh của LLM. Nhờ đó, LLM có thể dựa vào tài liệu tham khảo chính xác vừa được cung cấp để sinh câu trả lời, thay vì chỉ dựa vào trí nhớ mờ nhạt từ quá trình huấn luyện ban đầu.
+\end{enumerate}
+
+\section{Kiến trúc hệ thống Đa tác tử}
+Tác tử AI được định nghĩa là một hệ thống tính toán có khả năng nhận thức môi trường xung quanh, đưa ra quyết định và thực hiện hành động một cách tự chủ thông qua các công cụ.
+
+Trong bối cảnh bài toán phức tạp như kiểm thử xâm nhập, việc dồn tất cả nhiệm vụ cho một tác tử nguyên khối dễ gây ra rối loạn luồng suy luận. Kiến trúc Đa tác tử giải quyết vấn đề này bằng cách phân chia hệ thống thành nhiều tác tử chuyên biệt, mỗi tác tử được gắn với một chỉ thị hệ thống và một bộ công cụ riêng biệt.
+
+Đồ án áp dụng mô hình \textbf{Tác tử Phân cấp}. Một tác tử Chỉ huy chịu trách nhiệm phân tích mục tiêu, lập kế hoạch và điều phối nhiệm vụ, trong khi các tác tử Cấp dưới như Trinh sát hay Khai thác chịu trách nhiệm thi hành các lệnh cụ thể. Sự giao tiếp giữa các tác tử được thực hiện thông qua thông điệp ngôn ngữ tự nhiên. 
+
+\section{Đồ thị tri thức}
+Đồ thị tri thức là một mô hình biểu diễn dữ liệu hướng đồ thị, trong đó dữ liệu được tổ chức dưới dạng các \textbf{Đỉnh} đại diện cho các thực thể và \textbf{Cạnh} đại diện cho mối quan hệ giữa các thực thể. 
+
+Trong an toàn thông tin, đồ thị tri thức đặc biệt hữu ích để mô hình hóa toàn cảnh bề mặt tấn công. Việc lưu trữ dữ liệu rà quét dưới dạng đồ thị cho phép hệ thống dễ dàng liên kết các mảnh thông tin rời rạc. Ví dụ: từ đỉnh Host, có mối quan hệ \textit{runs\_service} với đỉnh Port, đỉnh Port này lại có mối quan hệ \textit{uses\_tech} với đỉnh Technology, và cuối cùng liên kết với một đỉnh Vulnerability. Khả năng duy trì và mở rộng đồ thị liên tục qua nhiều bài kiểm thử gọi là Đồ thị tri thức động.
+
+\section{Giao thức Model Context Protocol, MCP,}
+Model Context Protocol, MCP, \cite{mcp2024} là một giao thức mã nguồn mở do Anthropic giới thiệu nhằm tiêu chuẩn hóa quá trình giao tiếp giữa các mô hình trí tuệ nhân tạo và các công cụ, dữ liệu của máy chủ cục bộ.
+
+MCP áp dụng mô hình Client - Server thông qua kênh truyền tải đầu vào đầu ra tiêu chuẩn thay vì giao thức HTTP truyền thống. Trong hệ thống ứng dụng, AI yêu cầu thực thi một tác vụ. MCP Bridge nhận yêu cầu, mã hóa nó thành gói tin JSON-RPC và đẩy qua luồng đầu vào của tiến trình MCP Server. Tiến trình này chạy biệt lập trên máy tính, thực thi công cụ dòng lệnh và trả kết quả văn bản qua luồng đầu ra. Cơ chế này đảm bảo mã nguồn LLM hoàn toàn được cô lập với tầng thực thi lệnh nguy hiểm.
+
+\section{Tổng quan các công cụ kiểm thử tích hợp}
+Hệ thống tích hợp nhiều công cụ mã nguồn mở phổ biến của giới bảo mật mạng, được kích hoạt thông qua giao diện MCP:
+\begin{itemize}
+    \item \textbf{Công cụ Trinh sát:}
+    \begin{itemize}
+        \item \textit{Nmap} \cite{nmap2024}: Tiện ích quét mạng, tìm kiếm các cổng mở và xác định dịch vụ đang chạy trên đó.
+        \item \textit{Dirb / Wfuzz}: Công cụ quét ép để tìm các thư mục và đường dẫn tập tin ẩn trên máy chủ Web.
+        \item \textit{WhatWeb}: Trích xuất dấu vết nhằm nhận diện chính xác các công nghệ tạo nên ứng dụng Web.
+        \item \textit{WafW00f}: Nhận diện tường lửa ứng dụng Web đang bảo vệ mục tiêu.
+    \end{itemize}
+    \item \textbf{Công cụ Khai thác:}
+    \begin{itemize}
+        \item \textit{SQLMap} \cite{sqlmap2024}: Công cụ tự động hóa việc phát hiện và khai thác lỗ hổng SQL Injection trên các tham số URL hoặc Form dữ liệu.
+        \item \textit{Hydra}: Trình bẻ khóa mật khẩu song song hỗ trợ nhiều giao thức như FTP, SSH, HTTP Form.
+        \item \textit{Commix}: Chuyên dụng để kiểm tra tự động các lỗ hổng tiêm nhiễm lệnh hệ điều hành.
+    \end{itemize}
+    \item \textbf{Công cụ Quét tổng hợp:}
+    \begin{itemize}
+        \item \textit{OWASP ZAP}: Công cụ Proxy chặn bắt và rà quét lỗ hổng ứng dụng Web toàn diện.
+        \item \textit{Nikto}: Máy quét cấu hình máy chủ Web chuyên dụng để tìm kiếm các tập tin nguy hiểm và lỗi cấu hình Header.
+    \end{itemize}
+\end{itemize}
+
+\section{Cơ sở lý thuyết JSON Web Token, JWT,}
+JSON Web Token, JWT, là một tiêu chuẩn mở, RFC 7519, định nghĩa một phương thức nhỏ gọn và khép kín để truyền tải thông tin an toàn giữa các bên dưới dạng đối tượng JSON \cite{jwt2015}. JWT đặc biệt phổ biến trong các ứng dụng Web hiện đại để xử lý phiên làm việc và ủy quyền do tính chất phi trạng thái, giúp giảm tải cho cơ sở dữ liệu.
+
+Cấu trúc của một JWT bao gồm ba phần được mã hóa Base64Url và phân cách bằng dấu chấm, .,, bao gồm:
+\begin{itemize}
+    \item \textbf{Tiêu đề:} Chứa thông tin về loại token, thường là "JWT", và thuật toán mã hóa, ví dụ: HMAC SHA256 hoặc RSA.
+    \item \textbf{Tải trọng:} Chứa các thông điệp, tức là các thông tin về người dùng hoặc dữ liệu bổ sung, ví dụ: ID, email, quyền hạn, thời gian hết hạn.
+    \item \textbf{Chữ ký:} Được tạo ra bằng cách mã hóa phần Tiêu đề và Tải trọng cùng với một khóa bí mật. Chữ ký đảm bảo rằng dữ liệu trong token không bị chỉnh sửa trên đường truyền. Đối với thuật toán HMAC SHA256, chữ ký được tính bằng công thức:
+\end{itemize}
+
+\begin{equation}
+\text{Signature} = \text{HMACSHA256}\Big(\text{base64UrlEncode}(\text{header}) + \text{"."} + \text{base64UrlEncode}(\text{payload}),\; \text{secret}\Big)
+\end{equation}
+
+Trong an toàn thông tin, JWT thường là mục tiêu của nhiều dạng tấn công như: thay đổi thuật toán mã hóa thành \texttt{none} để vượt qua chữ ký, tấn công bạo lực để đoán khóa bí mật, hoặc làm rò rỉ các thông tin cá nhân nhạy cảm nếu lập trình viên đưa dữ liệu quan trọng vào phần Tải trọng, vốn chỉ mã hóa Base64Url chứ không mã hóa bảo mật.
+
+\section{Các công nghệ nền tảng lập trình}
+Để xây dựng nên ứng dụng, đồ án sử dụng các công nghệ lập trình hiện đại:
+\begin{itemize}
+    \item \textbf{FastAPI} \cite{fastapi2024}: Framework phát triển Backend bằng ngôn ngữ Python, nổi tiếng với khả năng xử lý bất đồng bộ hiệu năng cao và tự động sinh tài liệu Swagger UI.
+    \item \textbf{React} \cite{react2024}: Thư viện JavaScript mã nguồn mở chuyên biệt để xây dựng giao diện người dùng theo kiến trúc thành phần.
+    \item \textbf{Supabase} \cite{supabase2024}: Dịch vụ Backend-as-a-Service mã nguồn mở dựa trên PostgreSQL. Điểm đáng chú ý của hệ quản trị cơ sở dữ liệu này là tiện ích mở rộng pgvector, hỗ trợ lưu trữ vector và truy vấn tìm kiếm độ tương đồng Cosine trực tiếp bằng hàm RPC của SQL, đáp ứng hoàn hảo cho việc xây dựng cơ sở dữ liệu RAG.
+\end{itemize}

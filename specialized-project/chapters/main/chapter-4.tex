@@ -1,0 +1,125 @@
+\chapter{Hiện thực hệ thống}
+
+\section{Môi trường phát triển và Cấu trúc mã nguồn}
+Hệ thống được hiện thực hóa dựa trên các công nghệ và thư viện phần mềm hiện đại, có tính linh hoạt cao. Toàn bộ mã nguồn chia thành 2 thư mục chính: \texttt{frontend} và \texttt{backend}.
+\begin{itemize}
+    \item \textbf{Ngôn ngữ lập trình:} Python 3.11, JavaScript ES6.
+    \item \textbf{Mô hình Trí tuệ Nhân tạo:} Google Gemini 2.5 Flash thông qua REST API, \texttt{generativelanguage.googleapis.com}.
+    \item \textbf{Framework Backend:} FastAPI 0.115, Uvicorn 0.32, Pydantic, Supabase Python SDK, MCP 1.2.0.
+    \item \textbf{Framework Frontend:} React 18.3, Vite 6.0, HTML5/CSS3.
+    \item \textbf{Môi trường thực thi lệnh:} Windows Subsystem for Linux, WSL2, cài đặt phân phối Ubuntu 22.04 chứa các công cụ kiểm thử nguyên bản.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{figures/source_code_structure.png}
+    \caption{Cấu trúc mã nguồn của hệ thống}
+    \label{fig:source_code}
+\end{figure}
+
+\section{Hiện thực tầng Backend}
+
+\subsection{Quản lý Cấu hình và Xoay vòng Khóa API}
+Trong quá trình kiểm thử, AI phải thực hiện liên tục hàng chục luồng suy luận, dễ dẫn đến lỗi vượt giới hạn yêu cầu, HTTP 429, của nhà cung cấp API. Hệ thống hiện thực lớp \texttt{APIKeyPool} trong tệp \texttt{config.py} để giải quyết triệt để vấn đề này.
+\begin{itemize}
+    \item Khởi tạo đọc danh sách nhiều khóa API từ biến môi trường \texttt{GEMINI\_API\_KEYS}, phân tách bằng dấu phẩy. Nếu chỉ có một khóa duy nhất trong biến \texttt{OPENAI\_API\_KEY}, hệ thống tự động dùng làm dự phòng.
+    \item Sử dụng \texttt{threading.Lock} đảm bảo an toàn trong môi trường đa luồng.
+    \item Hàm \texttt{rotate()} không xoay vòng tuần tự mà chọn khóa có thuộc tính \texttt{\_error\_counts} thấp nhất, đóng vai trò như một cơ chế cân bằng tải thông minh. Mỗi lần gọi thành công, hàm \texttt{report\_success()} giảm bộ đếm lỗi xuống 1.
+    \item Tại tầng gọi API (\texttt{generate\_content()} trong \texttt{agent.py}), mỗi khi nhận mã HTTP 401, 403, 429, 500 hoặc 503, hệ thống lập tức gọi \texttt{rotate()} chuyển sang khóa khác và thử lại. Số lần thử tối đa được tính bằng công thức \texttt{max(5, key\_count * 2)}, nghĩa là càng nhiều khóa thì hệ thống càng bền bỉ.
+\end{itemize}
+
+\subsection{Hiện thực Logic Tác tử lõi, \texttt{agent.py},}
+Đây là tập lệnh 372 dòng điều khiển toàn bộ quy trình hội thoại giữa AI và công cụ kiểm thử.
+\begin{itemize}
+    \item \textbf{Lớp GeminiNativeClient:} Được xây dựng tùy chỉnh làm trình bao bọc, chuyển đổi định dạng tin nhắn chuẩn OpenAI sang chuẩn gốc của Gemini. Lớp này tự xử lý các phần tử \texttt{functionCall} và \texttt{functionResponse}, đồng thời lọc bỏ các phần tử \texttt{thought}, suy nghĩ nội bộ, của mô hình trước khi trả kết quả cho tầng trên.
+    \item \textbf{Hàm run\_chat():} Đây là điểm vào chính. Quy trình thực thi tuần tự như sau:
+    \begin{enumerate}
+        \item Gọi hàm \texttt{embed\_text()} nhúng yêu cầu người dùng thành vector 768 chiều.
+        \item Truy vấn Supabase thông qua hàm \texttt{search\_wstg\_kb()} để tìm 2 đoạn tri thức OWASP có điểm tương đồng cao nhất.
+        \item Gọi \texttt{RAGEnhancer.enrich\_prompt()} để bổ sung gợi ý tấn công và danh sách đường dẫn từ Đồ thị tri thức.
+        \item Tiêm bảng \texttt{ENDPOINT\_HINTS} tương ứng với nhóm WSTG đang kiểm thử.
+        \item Tiêm dữ liệu trinh sát từ bộ đệm chia sẻ qua hàm \texttt{get\_recon\_summary()}.
+        \item Tiêm chuỗi bằng chứng từ các phiên kiểm thử trước thông qua \texttt{list\_wstg\_logs()}.
+        \item Kiểm tra cờ \texttt{multi\_agent\_enabled}: nếu bật, chuyển giao quyền điều khiển cho \texttt{PlannerAgent}; nếu không, chạy vòng lặp đơn tác tử.
+    \end{enumerate}
+    \item \textbf{Vòng lặp công cụ:} Hàm \texttt{\_run\_with\_mcp()} thực thi vòng lặp tối đa 30 lượt. Mỗi lượt, AI được phép gọi một hoặc nhiều công cụ. Kết quả công cụ được trả lại cho AI để tiếp tục suy luận cho đến khi AI tự kết luận hoặc đạt giới hạn vòng.
+    \item \textbf{Cơ chế phục hồi lỗi:} Nếu xảy ra ngoại lệ giữa chừng, hết quota API, lỗi mạng,, hệ thống không dừng hoàn toàn mà tạo một báo cáo dự phòng liệt kê tất cả công cụ đã chạy thành công trước đó, kèm kết luận \texttt{NEEDS\_REVIEW} để người dùng kiểm tra thủ công.
+\end{itemize}
+
+\subsection{Bảng gợi ý đường dẫn tĩnh (ENDPOINT\_HINTS)}
+Ngoài tri thức RAG, hệ thống còn lập trình sẵn một bảng Python cứng chứa 8 nhóm gợi ý đường dẫn tương ứng với các nhóm WSTG. Ví dụ:
+\begin{itemize}
+    \item Nhóm \texttt{INPV}, kiểm thử đầu vào: Gợi ý các đường dẫn chứa tham số dễ bị tiêm nhiễm SQL như \texttt{/rest/products/search?q=test}, hoặc chứa trường dữ liệu dễ bị XSS như \texttt{/api/Feedbacks}.
+    \item Nhóm \texttt{ATHN}, xác thực: Gợi ý đường dẫn đăng nhập \texttt{/rest/user/login}, tài khoản mặc định \texttt{admin@juice-sh.op / admin123}, và đường dẫn đặt lại mật khẩu.
+    \item Nhóm \texttt{SESS}, phiên làm việc: Gợi ý kiểm tra cờ bảo mật trên cookie, kiểm tra JWT bằng công cụ \texttt{jwt\_decode\_tool}.
+\end{itemize}
+Bảng này đảm bảo AI luôn có một "bản đồ sơ bộ" về mục tiêu ngay cả khi RAG không tìm được tài liệu liên quan.
+
+\subsection{Hiện thực mô-đun tăng cường RAG (\texttt{rag\_enhancer.py})}
+Lớp \texttt{RAGEnhancer} đóng vai trò "cố vấn chiến thuật", bổ sung ngữ cảnh động từ Đồ thị tri thức vào dữ liệu RAG tĩnh.
+\begin{itemize}
+    \item \textbf{Bảng TECH\_ATTACK\_MAP:} Một từ điển Python ánh xạ 12 công nghệ phổ biến sang các kỹ thuật tấn công tương ứng. Ví dụ: nếu DKG chứa đỉnh dịch vụ \textit{sqlite}, mô-đun sẽ tự động tiêm vào chỉ thị ``Thử UNION SELECT, typeof(), sqlite\_version(). Dùng sqlmap với --dbms=sqlite''. Tương tự với MySQL, PostgreSQL, Express, Apache, PHP, GraphQL, JWT và MongoDB.
+    \item \textbf{Hàm \_get\_tech\_hints():} Quét toàn bộ đỉnh kiểu \textit{service} và \textit{technology} trong DKG, đồng thời dùng biểu thức chính quy quét thêm văn bản thô từ bộ đệm kế thừa để phát hiện các công nghệ mà bộ phân tích cú pháp chưa bóc tách được.
+    \item \textbf{Hàm \_get\_dynamic\_endpoints():} Lấy danh sách đường dẫn từ DKG, sắp xếp theo hàm chấm điểm: đường dẫn chứa ký tự ``?'' được cộng 5 điểm, chứa từ ``api'' hoặc ``rest'' được cộng 3 điểm, chứa từ ``login'' hoặc ``admin'' được cộng 2 điểm. Tối đa 20 đường dẫn được tiêm vào chỉ thị.
+    \item \textbf{Hàm \_get\_related\_vulns():} Liên kết các lỗ hổng đã phát hiện trước đó với nhóm WSTG hiện tại thông qua bảng \texttt{CATEGORY\_VULN\_MAP}, giúp AI nhận thức được các mối đe dọa đã biết.
+\end{itemize}
+
+\subsection{Hiện thực Trình điều phối đa tác tử (\texttt{multi\_agent.py})}
+Đây là tập lệnh 306 dòng phức tạp nhất, đóng vai trò ``nhạc trưởng'' quản lý 4 tác tử.
+\begin{itemize}
+    \item \textbf{Tác tử Chỉ huy:} Được giới hạn tối đa 3 vòng lặp (\texttt{max\_iterations = 3}) để tránh AI rơi vào vòng lặp vô hạn. Trước mỗi vòng, hàm \texttt{plan\_and\_execute()} tổng hợp ngữ cảnh RAG và bề mặt tấn công từ DKG, rồi yêu cầu AI lập kế hoạch 1--3 bước. Mỗi bước được phân tích tự động bằng biểu thức chính quy để trích xuất cú pháp \texttt{[ASSIGN: RECON]} hoặc \texttt{[ASSIGN: EXPLOIT]}.
+    \item \textbf{Tác tử Trinh sát:} Được truyền tập \texttt{ALLOWED\_TOOLS} chỉ chứa 9 công cụ thu thập thông tin an toàn, nmap, dirb, curl, whatweb, nikto, dnsrecon, wafw00f, graphql. Tham số \texttt{allowed\_tools} được truyền vào hàm \texttt{\_run\_with\_mcp()} ở tầng agent, nơi danh sách công cụ được lọc trước khi gửi cho LLM.
+    \item \textbf{Tác tử Khai thác:} Được trang bị 8 công cụ tấn công, sqlmap, commix, hydra, wfuzz, zap, curl. Trong System Prompt, Tác tử Khai thác bị ép tuyệt đối không được chạy sqlmap trên trang chủ không có tham số.
+    \item \textbf{Tác tử Xác thực:} Hoạt động theo cơ chế kích hoạt có điều kiện. Sau mỗi bước khai thác, hệ thống quét kết quả tìm từ khóa nhạy cảm, \texttt{vulnerability}, \texttt{injection}, \texttt{found}, \texttt{exploitable}, \texttt{sqli}, \texttt{xss}, \texttt{rce}. Chỉ khi phát hiện ít nhất 1 từ khóa, Verifier mới được kích hoạt. Verifier trả về phán quyết dưới định dạng JSON được trích xuất bằng biểu thức \texttt{\textbackslash\{.*\textbackslash\}}, bao gồm 3 trường: \texttt{verdict} (TRUE\_POSITIVE, FALSE\_POSITIVE hoặc INCONCLUSIVE), \texttt{confidence}, 0--100, và \texttt{reason}. Ngưỡng xác nhận lỗ hổng là \texttt{confidence >= 70}.
+\end{itemize}
+
+\subsection{Hiện thực Đồ thị tri thức (\texttt{knowledge\_graph.py})}
+Mã nguồn 298 dòng hiện thực đồ thị trên bộ nhớ chính, bảo vệ bằng khóa luồng, \texttt{threading.Lock}, và tự động ghi ra tệp \texttt{recon\_cache.json}.
+\begin{itemize}
+    \item \textbf{Cấu trúc dữ liệu:} Đỉnh được lưu trong từ điển \texttt{\_nodes} với khóa dạng \texttt{node\_type:label}, cạnh lưu trong danh sách \texttt{\_edges}. Mỗi đỉnh ghi nhận danh sách nguồn phát hiện, \texttt{sources}, và dấu thời gian tạo/cập nhật.
+    \item \textbf{Hàm ingest\_nmap():} Sử dụng biểu thức chính quy\\ \texttt{(\textbackslash d+)/([a-zA-Z]+)\textbackslash s+open\textbackslash s+(\textbackslash S+)(?:\textbackslash s+(.*))?} để bóc tách số cổng, giao thức, tên dịch vụ và phiên bản từ đầu ra Nmap. Mỗi dòng khớp được chuyển thành 2 đỉnh, \textit{port} và \textit{service}, nối với đỉnh \textit{host} qua 2 cạnh (\textit{has\_port} và \textit{runs\_service}).
+    \item \textbf{Hàm ingest\_dirb():} Dùng biểu thức \texttt{(?:DIRECTORY|==> )?\textbackslash s*(https?://[\textasciicircum\textbackslash s]+)} trích xuất các URL, rồi tách phần đường dẫn để tạo đỉnh \textit{endpoint}.
+    \item \textbf{Hàm ingest\_whatweb():} Loại bỏ mã thoát ANSI bằng regex \texttt{\textbackslash x1b\textbackslash[[0-9;]*m}, sau đó tách chuỗi theo dấu phẩy và nhận diện tên công nghệ từ các thẻ ngoặc vuông.
+    \item \textbf{Hàm generate\_attack\_surface():} Chuyển đổi toàn bộ đồ thị thành đoạn văn bản mô tả bề mặt tấn công. Hàm này duyệt từ đỉnh \textit{host}, liệt kê các cổng mở kèm dịch vụ, các công nghệ phát hiện và tối đa 15 đường dẫn.
+    \item \textbf{Bộ đệm kế thừa:} Ngoài cấu trúc đồ thị, hệ thống duy trì một từ điển phẳng \texttt{\_legacy\_cache} lưu trữ kết quả thô của các công cụ. Hàm \texttt{get\_cached\_tool\_result()} cho phép tra cứu kết quả cũ theo khóa \texttt{tool\_name + args}, hoàn toàn bỏ qua việc gọi lại tiến trình con.
+\end{itemize}
+
+\subsection{Hiện thực cầu nối MCP và Công cụ kiểm thử}
+Tập lệnh \texttt{pentest\_mcp\_tools.py} dài 846 dòng, bao gồm 19 hàm bọc cho các công cụ kiểm thử sau: \texttt{nmap\_scan}, \texttt{dirb\_scan}, \texttt{hydra\_brute}, \texttt{sqlmap\_scan}, \texttt{nikto\_scan}, \texttt{whatweb\_scan}, \texttt{wafw00f\_detect}, \texttt{dnsrecon\_scan}, \texttt{testssl\_scan}, \texttt{curl\_check}, \texttt{graphql\_introspection\_scan}, \texttt{commix\_scan}, \texttt{wfuzz\_scan}, \texttt{tplmap\_scan}, \texttt{zap\_scan}, \texttt{reconng\_scan}, \texttt{padbuster\_scan}, \texttt{curl\_authenticated\_check} và \texttt{jwt\_decode\_token}.
+\begin{itemize}
+    \item \textbf{Cơ chế thực thi:} Hàm \texttt{\_run()} cốt lõi gọi \texttt{subprocess.run()} với các thuộc tính \texttt{timeout}, \texttt{capture\_output=True}, \texttt{encoding="utf-8"} và \texttt{errors="replace"}. Hệ thống bắt 3 loại ngoại lệ: \texttt{FileNotFoundError}, công cụ chưa cài,, \texttt{TimeoutExpired}, treo quá thời gian, và \texttt{OSError}, lỗi hệ điều hành.
+    \item \textbf{Danh sách trắng máy chủ:} Hàm \texttt{\_target\_host\_ok()} kiểm tra địa chỉ mục tiêu. Mặc định chỉ cho phép \texttt{localhost}, \texttt{127.0.0.1} và các địa chỉ IP nội bộ. Với tên miền bên ngoài, phải nằm trong biến \texttt{PENTEST\_ALLOWED\_HOSTS} hoặc bật cờ \texttt{PENTEST\_ALLOW\_ANY}.
+    \item \textbf{Cắt ngắn 2 tầng:} Tại tầng công cụ, hàm \texttt{\_truncate\_out()} giới hạn đầu ra ở 80.000 ký tự. Tại tầng tác tử, \texttt{agent.py},, nếu kết quả vẫn vượt 15.000 ký tự, hệ thống áp dụng thuật toán cắt thông minh: giữ 6.000 ký tự đầu và 6.000 ký tự cuối, loại bỏ phần giữa. Cách làm này đảm bảo AI vẫn đọc được phần tóm tắt ở đầu và phần kết luận lỗ hổng ở cuối.
+    \item \textbf{Xác thực có phiên đăng nhập:} Hàm \texttt{curl\_authenticated\_check()} hiện thực theo 2 pha. Pha 1: tự động gọi API đăng nhập mặc định, phân tích phản hồi JSON để trích xuất mã JWT. Pha 2: nhúng mã JWT vào tiêu đề \texttt{Authorization: Bearer} và gửi yêu cầu tới đường dẫn mục tiêu.
+\end{itemize}
+
+\subsection{Hiện thực bộ ghi nhật ký (\texttt{prompt\_logger.py})}
+Toàn bộ quá trình tương tác giữa hệ thống và mô hình AI được ghi lại chi tiết vào thư mục \texttt{logs/}. Mỗi bài kiểm thử tạo một tệp JSON riêng biệt chứa: chỉ thị hệ thống đầy đủ, bao gồm RAG, gợi ý đường dẫn, dữ liệu trinh sát,, danh sách công cụ đã gọi kèm tham số và kết quả, và kết luận cuối cùng của AI. Nhật ký này phục vụ mục đích gỡ lỗi và kiểm toán sau khi hệ thống chạy xong.
+
+\section{Hiện thực tầng Frontend}
+Giao diện người dùng được xây dựng gọn nhẹ trên tập tin \texttt{App.jsx} duy nhất.
+\begin{itemize}
+    \item Dữ liệu của 105 kịch bản WSTG được biên dịch sẵn vào tệp \texttt{wstg\_extracted.json}, bao gồm mã bài, tên bài và mô tả ngắn.
+    \item Tệp \texttt{index.css} sử dụng hệ thống màu sắc theo trạng thái: Xanh lá, PASS,, Cam, ISSUE,, Xanh dương, NEEDS REVIEW,, và Đỏ, ERROR.
+    \item Hàm \texttt{runAllTests()} hiện thực thuật toán chạy tuần tự với độ trễ 5 giây giữa các bài, đồng thời tự động dừng hoàn toàn tiến trình nếu nhận mã HTTP 429 từ máy chủ nhằm bảo toàn hệ thống.
+    \item Kết quả nhận về từ hệ thống được quét bằng biểu thức chính quy tìm chuỗi \texttt{[CONCLUSION]} để phân tách nhận định của AI (PASS, ISSUE hoặc NEEDS\_REVIEW), sau đó lưu ngay trạng thái vào cơ sở dữ liệu để hiển thị bảng tổng hợp.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/frontend_ui.png}
+    \caption{Giao diện Web điều khiển và theo dõi tiến trình kiểm thử}
+    \label{fig:frontend_ui}
+\end{figure}
+
+\section{Hiện thực Cơ sở dữ liệu}
+Hệ thống sử dụng Supabase cung cấp cơ sở dữ liệu PostgreSQL kết hợp tiện ích pgvector.
+\begin{itemize}
+    \item Lược đồ \texttt{supabase\_schema.sql} định nghĩa 3 bảng chính:
+    \begin{itemize}
+        \item \texttt{command\_log}: Ghi lại toàn bộ hội thoại, vai trò, nội dung, tên công cụ, tham số, kết quả, mã phiên, mã WSTG.
+        \item \texttt{wstg\_results}: Lưu trạng thái cuối cùng của mỗi bài kiểm thử (mã WSTG, trạng thái PASS/ISSUE/NEEDS\_REVIEW, tóm tắt kết quả).
+        \item \texttt{wstg\_kb}: Cơ sở tri thức OWASP WSTG, chứa cột \texttt{embedding} kiểu \textit{vector, 768,} và hàm RPC \texttt{match\_wstg\_kb} tính khoảng cách Cosine.
+    \end{itemize}
+    \item Hàm thao tác dữ liệu trong \texttt{db.py} được viết bằng \texttt{asyncio.to\_thread()} để đóng gói các tác vụ xử lý đồng bộ của Supabase SDK, giúp FastAPI không bị nghẽn luồng sự kiện.
+\end{itemize}

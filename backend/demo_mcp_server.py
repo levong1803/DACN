@@ -56,14 +56,18 @@ def server_time() -> str:
 
 
 @mcp.tool()
-def nmap_scan_ports(target: str, ports: str = "80,443") -> str:
+def nmap_scan_ports(target: str, ports: str = "1-65535") -> str:
     """Quét cổng với nmap (cần cài nmap / Kali). Chỉ dùng trên mục tiêu được phép."""
     return nmap_scan(target, ports)
 
 
 @mcp.tool()
 def dirb_web_scan(url: str, wordlist: str | None = None) -> str:
-    """Dò thư mục web với dirb. wordlist mặc định đường Kali; Windows cần chỉ đường file có sẵn."""
+    """
+    Dò thư mục/file web với dirb (lab). URL dạng http://host/ hoặc https://host/
+    Bạn CÓ THỂ truyền 'wordlist' (vd: '/usr/share/dirb/wordlists/big.txt' hoặc '/usr/share/wordlists/dirb/api_endpoints.txt') 
+    để mở rộng phạm vi quét nếu 'common.txt' không tìm thấy gì hữu ích.
+    """
     return dirb_scan(url, wordlist)
 
 
@@ -82,9 +86,11 @@ def hydra_service_brute(
 
 
 @mcp.tool()
-def sqlmap_web_scan(url: str, level: int = 1, risk: int = 1) -> str:
-    """Quét và tìm lỗi cơ sở dữ liệu (SQL Injection) bằng sqlmap. Tham số level (1-5) và risk (1-3) có thể được tăng lên để quét sâu hơn nếu cần."""
-    return sqlmap_scan(url, level, risk)
+def sqlmap_web_scan(url: str, level: int = 1, risk: int = 1, dbms: str = "", dbms_os: str = "") -> str:
+    """Quét và tìm lỗi cơ sở dữ liệu (SQL Injection) bằng sqlmap. 
+    Tham số level (1-5) và risk (1-3) có thể được tăng lên để quét sâu hơn nếu cần.
+    Nếu đã biết loại DBMS (VD: 'sqlite', 'mysql', 'postgresql'), hãy truyền vào tham số `dbms` để tăng tốc độ quét và độ chính xác."""
+    return sqlmap_scan(url, level, risk, dbms, dbms_os)
 
 
 # ── 6 Tool mới ───────────────────────────────────────────────
@@ -129,6 +135,13 @@ def curl_http_check(url: str, method: str = "HEAD") -> str:
 def commix_cmd_inject(url: str) -> str:
     """Kiểm tra và khai thác lỗ hổng OS Command Injection tự động với commix. URL cần chứa tham số (VD: http://target/page.php?id=1)."""
     return commix_scan(url)
+
+
+@mcp.tool()
+def graphql_introspection_check(url: str) -> str:
+    """Kiểm tra GraphQL Introspection có đang mở hay không bằng cách gửi query truy vấn schema (__schema). Thường dùng cho đường dẫn /graphql."""
+    from pentest_mcp_tools import graphql_introspection_scan
+    return graphql_introspection_scan(url)
 
 
 @mcp.tool()

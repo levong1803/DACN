@@ -74,7 +74,8 @@
         "objectives": "N/A, This content has been merged into: WSTG-INFO-08",
         "tools": "NA",
         "owasp": "NA",
-        "cwe": "NA"
+        "cwe": "NA",
+        "deprecated": true
       },
       {
         "wstgId": "WSTG-INFO-10",
@@ -255,7 +256,8 @@
         "objectives": "N/A, This content has been merged into: WSTG-CRYP-03",
         "tools": "NA",
         "owasp": "NA",
-        "cwe": "NA"
+        "cwe": "NA",
+        "deprecated": true
       },
       {
         "wstgId": "WSTG-ATHN-02",
@@ -500,7 +502,8 @@
         "objectives": "N/A, This content has been merged into: WSTG-CONF-06",
         "tools": "NA",
         "owasp": "NA",
-        "cwe": "NA"
+        "cwe": "NA",
+        "deprecated": true
       },
       {
         "wstgId": "WSTG-INPV-04",
@@ -649,9 +652,9 @@
         "wstgId": "WSTG-ERRH-01",
         "name": "Testing for Improper Error Handling",
         "objectives": "- Identify existing error output (i.e.: Random files/folders (40x)\n- Analyze the different output returned.",
-        "tools": "",
-        "owasp": "Burpsuite/ZAP",
-        "cwe": "A5"
+        "tools": "Burpsuite/ZAP",
+        "owasp": "A5",
+        "cwe": "CWE-209, CWE-756"
       },
       {
         "wstgId": "WSTG-ERRH-02",
@@ -659,7 +662,8 @@
         "objectives": "N/A, This content has been merged into: WSTG-ERRH-01",
         "tools": "",
         "owasp": "NA",
-        "cwe": "NA"
+        "cwe": "NA",
+        "deprecated": true
       }
     ]
   },

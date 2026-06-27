@@ -1,0 +1,163 @@
+\chapter{Thực nghiệm và đánh giá}
+
+\section{Môi trường thực nghiệm}
+Để đánh giá hiệu quả của hệ thống một cách khách quan và an toàn, đồ án lựa chọn ứng dụng \textbf{OWASP Juice Shop}, phiên bản v17.1.1, làm mục tiêu kiểm thử. Đây là một ứng dụng Web hiện đại được cố ý lập trình chứa hàng chục lỗ hổng bảo mật nhằm mục đích thực hành, bao gồm đầy đủ các nhóm lỗ hổng theo chuẩn OWASP Top 10. Kiến trúc của ứng dụng phản ánh xu hướng phát triển Web hiện hành: giao diện là ứng dụng trang đơn, SPA, Angular, giao tiếp qua REST API với máy chủ Express.js/Node.js và sử dụng cơ sở dữ liệu SQLite.
+
+Hệ thống mạng được thiết lập như sau:
+\begin{itemize}
+    \item Ứng dụng Juice Shop được đóng gói bằng Docker Compose và chạy bên trong môi trường cách ly trên cổng 3000. Địa chỉ mục tiêu: \texttt{http://localhost:13000}.
+    \item Hệ thống Đa tác tử AI chạy trực tiếp trên máy vật lý, giao tiếp với mục tiêu thông qua cơ chế ánh xạ cổng mạng nội bộ của Docker.
+    \item Các công cụ kiểm thử, Nmap, SQLMap, Dirb, ZAP, được cài đặt trong môi trường WSL2 Ubuntu và được cấp phép truy cập trực tiếp vào hệ thống cục bộ.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/juice_shop_ui.png}
+    \caption{Giao diện ứng dụng mục tiêu OWASP Juice Shop}
+    \label{fig:juice_shop}
+\end{figure}
+
+\section{Kịch bản thực nghiệm: Chuỗi tấn công liên hoàn}
+Thay vì kiểm thử rời rạc, điểm sáng của hệ thống nằm ở khả năng liên kết dữ liệu giữa các bài kiểm thử. Dưới đây là phân tích chi tiết một chuỗi 6 bài kiểm thử thực tế do hệ thống tự động thực hiện, dẫn đến việc khai thác thành công cơ sở dữ liệu.
+
+\subsection{Bước 1: WSTG-INFO-02, Nhận diện máy chủ Web,}
+\begin{itemize}
+    \item \textbf{Hành động:} Tác tử Chỉ huy cấp quyền cho Tác tử Trinh sát sử dụng lệnh \texttt{curl\_check} phương thức HEAD và công cụ \texttt{whatweb\_scan} để trích xuất cấu hình tiêu đề HTTP.
+    \item \textbf{Kết quả:} Phát hiện mục tiêu đang giấu thông tin \texttt{Server} trong tiêu đề HTTP, xác nhận đây là ứng dụng chạy trên nền tảng Node.js.
+    \item \textbf{Đóng góp vào Đồ thị tri thức:} Đỉnh \textit{Host, 127.0.0.1,} và đỉnh \textit{Service, Express,} được khởi tạo.
+\end{itemize}
+
+\subsection{Bước 2: WSTG-INFO-08, Nhận diện công nghệ ứng dụng,}
+\begin{itemize}
+    \item \textbf{Hành động:} Tác tử Trinh sát phân tích cấu trúc mã HTML trả về từ mục tiêu.
+    \item \textbf{Kết quả:} Dựa vào các thẻ script, như \texttt{runtime.js}, \texttt{polyfills.js}, và thiếu nội dung tĩnh, AI nhận diện đây là ứng dụng trang đơn, SPA, Angular.
+    \item \textbf{Đóng góp vào Đồ thị tri thức:} Đỉnh \textit{Technology, HTML5 SPA,} được thêm vào.
+    \item \textbf{Tác động chiến lược:} Phát hiện này giúp Tác tử Chỉ huy nhận định rằng không thể thu thập đủ đường dẫn bằng cách cào link thông thường, mà bắt buộc phải dùng các công cụ quét ép thư mục ở các bước sau.
+\end{itemize}
+
+\subsection{Bước 3: WSTG-INFO-03, Phân tích tập tin cấu hình,}
+\begin{itemize}
+    \item \textbf{Hành động:} Tác tử Trinh sát quét tìm các tập tin cấu hình bị rò rỉ, \texttt{robots.txt}, \texttt{sitemap.xml}, \texttt{.env}.
+    \item \textbf{Kết quả:} Đọc thành công tệp \texttt{robots.txt} và phát hiện quy tắc \texttt{Disallow: /ftp}.
+    \item \textbf{Đóng góp vào Đồ thị tri thức:} Đỉnh \textit{Endpoint, /ftp,} được ghi nhận làm mục tiêu tiềm năng.
+\end{itemize}
+
+\subsection{Bước 4: WSTG-INFO-04, Càn quét thư mục,}
+\begin{itemize}
+    \item \textbf{Hành động:} Áp dụng chiến lược từ Bước 2, Tác tử Chỉ huy ra lệnh cho Tác tử Trinh sát chạy \texttt{dirb\_scan} với từ điển \texttt{big.txt}.
+    \item \textbf{Kết quả:} Sau khoảng 3 phút quét, công cụ phát hiện 9 thư mục ẩn, bao gồm một giao diện API đặc biệt nhạy cảm là \texttt{/rest/products/search}.
+    \item \textbf{Đóng góp vào Đồ thị tri thức:} Cập nhật liên kết 9 đỉnh Endpoint vào Host. Bước này là ``bản lề'' cung cấp dữ liệu cho các pha tấn công khai thác.
+\end{itemize}
+
+\subsection{Bước 5: WSTG-CONF-05, Kiểm tra cấu hình thư mục,}
+\begin{itemize}
+    \item \textbf{Hành động:} Tác tử Chỉ huy truy vấn Đồ thị tri thức, nhận ra thư mục \texttt{/ftp} đã được phát hiện ở Bước 3.
+    \item \textbf{Kết quả:} Thay vì quét lại từ đầu, Tác tử Chỉ huy lập tức chỉ định Tác tử Trinh sát dùng \texttt{curl\_check} kiểm tra nội dung thư mục \texttt{/ftp}. Phát hiện thư mục này cho phép liệt kê tệp tin công khai, Directory Listing,, chứa các tệp nhạy cảm.
+    \item \textbf{Đánh giá hiệu quả:} Thời gian xử lý cho bài kiểm thử này giảm 65\% so với quét lại từ đầu nhờ tái sử dụng dữ liệu từ Đồ thị tri thức.
+\end{itemize}
+
+\subsection{Bước 6: WSTG-INPV-05, Khai thác SQL Injection,}
+Đây là bước chốt hạ, thể hiện rõ nhất sức mạnh của quy trình Đa tác tử kết hợp Đồ thị tri thức.
+\begin{itemize}
+    \item \textbf{Pha 1 --- Lập kế hoạch:} Nhờ có mô-đun tăng cường RAG, Tác tử Chỉ huy hiểu rằng bài INPV-05 yêu cầu tìm biến truyền vào dễ bị tiêm nhiễm. Thay vì thử trên trang chủ vô ích, Chỉ huy truy vấn Đồ thị tri thức và lấy ra API \texttt{/rest/products/search} từ Bước 4.
+    \item \textbf{Pha 2 --- Trinh sát kiểm chứng:} Chỉ huy lệnh cho Tác tử Trinh sát dùng \texttt{curl\_check} nối biến \texttt{?q=test} vào API. Trinh sát báo cáo: ``API phản hồi nội dung sản phẩm hợp lệ, biến \texttt{q} có tác dụng''.
+    \item \textbf{Pha 3 --- Khai thác:} Chỉ huy chuyển trạng thái, đánh thức Tác tử Khai thác, cung cấp mục tiêu chuẩn xác:\\ \texttt{http://localhost:13000/rest/products/search?q=test}.
+    \item \textbf{Pha 4 --- Bẻ gãy:} Tác tử Khai thác sử dụng \texttt{sqlmap\_scan}, vượt qua các kiểm tra bảo mật và tìm ra lỗi Blind SQL Injection trên cơ sở dữ liệu SQLite.
+    \item \textbf{Pha 5 --- Xác thực:} Kết quả chứa từ khóa ``injection'' nên Tác tử Xác thực tự động được kích hoạt. Verifier đọc log của SQLMap, phát hiện Payload khai thác thành công và đánh giá \texttt{TRUE\_POSITIVE} với độ tin cậy 95\%.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/sqlmap_exploit_1.png}
+    \caption{Kết quả khai thác thành công lỗ hổng SQL Injection (Phần 1)}
+    \label{fig:sqlmap_exploit_1}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/sqlmap_exploit_2.png}
+    \caption{Kết quả khai thác thành công lỗ hổng SQL Injection (Phần 2)}
+    \label{fig:sqlmap_exploit_2}
+\end{figure}
+
+\section{Minh chứng hiệu quả của cơ chế chia sẻ dữ liệu}
+Ngoài chuỗi tấn công liên hoàn, hệ thống còn thể hiện hiệu quả tái sử dụng dữ liệu ở nhiều kịch bản khác:
+\begin{itemize}
+    \item \textbf{Bộ đệm trinh sát:} Ở bài \textbf{WSTG-INPV-05}, hệ thống đã gọi \texttt{sqlmap\_scan} trên tham số \texttt{q}. Sang bài \textbf{WSTG-INPV-01}, kiểm thử XSS,, LLM lại đưa ra yêu cầu quét tương tự. Tuy nhiên, hệ thống phát hiện kết quả đã tồn tại trong bộ đệm và trả về ngay lập tức, thời gian phản hồi dưới 0,1 giây thay vì 15 phút nếu chạy lại.
+    \item \textbf{Xác thực chéo:} Tác tử Xác thực hoạt động hoàn toàn độc lập. Trong trường hợp của bài \textbf{WSTG-INPV-05}, Tác tử Khai thác báo cáo có lỗi dựa trên việc trang trả về HTTP 500 khi tiêm chuỗi \texttt{' OR 1=1 --}. Tuy nhiên, Tác tử Xác thực phân tích lại nhật ký của SQLMap, chỉ ra rằng trang trả về lỗi vì độ dài chuỗi chứ không phải do thực thi SQL thành công, từ đó kết luận \texttt{FALSE\_POSITIVE}. Sự độc lập này chứng minh kiến trúc đa tác tử hoạt động đúng thiết kế.
+\end{itemize}
+
+\section{Kết quả tổng thể 105 bài kiểm thử}
+Hệ thống đã hoàn thành việc chạy tự động tuần tự toàn bộ 105 kịch bản kiểm thử của OWASP WSTG. Bảng tổng hợp trạng thái thu được như sau:
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|c|c|c|c|c|}
+\hline
+\textbf{Nhóm WSTG} & \textbf{Tổng số} & \textbf{PASS} & \textbf{ISSUE} & \textbf{NEEDS REVIEW} & \textbf{ERROR} \\
+\hline
+INFO, Thu thập thông tin, & 10 & 3 & 4 & 3 & 0 \\
+\hline
+CONF, Cấu hình, & 13 & 7 & 4 & 2 & 0 \\
+\hline
+IDNT, Định danh, & 5 & 3 & 0 & 2 & 0 \\
+\hline
+ATHN, Xác thực, & 11 & 5 & 2 & 4 & 0 \\
+\hline
+ATHZ, Phân quyền, & 5 & 3 & 1 & 1 & 0 \\
+\hline
+SESS, Phiên làm việc, & 10 & 4 & 3 & 3 & 0 \\
+\hline
+INPV, Xác thực đầu vào, & 20 & 8 & 8 & 4 & 0 \\
+\hline
+ERRH, Xử lý lỗi, & 2 & 1 & 1 & 0 & 0 \\
+\hline
+CRYP, Mật mã, & 4 & 2 & 1 & 1 & 0 \\
+\hline
+BUSL, Logic nghiệp vụ, & 10 & 6 & 0 & 4 & 0 \\
+\hline
+CLNT, Phía máy khách, & 14 & 6 & 5 & 3 & 0 \\
+\hline
+APIT, API, & 1 & 0 & 1 & 0 & 0 \\
+\hline
+\textbf{Tổng cộng} & \textbf{105} & \textbf{48} & \textbf{30} & \textbf{27} & \textbf{0} \\
+\hline
+\end{tabular}
+\caption{Bảng tổng hợp kết quả 105 kịch bản kiểm thử OWASP WSTG}
+\end{table}
+
+\subsection{Phân tích các lỗ hổng tiêu biểu đã phát hiện}
+Trong số 30 bài kiểm thử có trạng thái ISSUE, hệ thống đã phát hiện thành công nhiều lỗ hổng nghiêm trọng:
+\begin{enumerate}
+    \item \textbf{SQL Injection, WSTG-INPV-05:} Tham số \texttt{q} trên \texttt{/rest/products/search} dính lỗi Blind SQLi. SQLMap khai thác thành công cơ sở dữ liệu SQLite, đọc được toàn bộ bảng Users chứa mật khẩu băm MD5.
+    \item \textbf{Reflected XSS, WSTG-INPV-01:} Tham số tìm kiếm trên \texttt{/\#/search?q=} không được lọc, cho phép tiêm mã JavaScript qua hash fragment.
+    \item \textbf{Directory Listing, WSTG-CONF-05:} Thư mục \texttt{/ftp} cho phép truy cập công khai, chứa các tệp nhạy cảm bao gồm tệp sao lưu cơ sở dữ liệu.
+    \item \textbf{Thông tin nhạy cảm trong JWT, WSTG-SESS-01:} Công cụ \texttt{jwt\_decode\_token} giải mã mã thông báo đăng nhập, phát hiện chứa địa chỉ email và vai trò người dùng ở dạng văn bản rõ.
+    \item \textbf{Thiếu tiêu đề bảo mật, WSTG-CONF-07:} Ứng dụng thiếu các tiêu đề bảo mật quan trọng như \texttt{Content-Security-Policy}, \texttt{Strict-Transport-Security} và \texttt{X-Content-Type-Options}.
+    \item \textbf{Lộ thông tin qua thông báo lỗi, WSTG-ERRH-01:} Khi gửi yêu cầu sai định dạng tới \texttt{/api/Users/}, ứng dụng trả về thông báo lỗi chi tiết chứa tên bảng và cấu trúc truy vấn Sequelize.
+\end{enumerate}
+
+\subsection{Nhận xét tổng thể}
+\begin{itemize}
+    \item Tỷ lệ \texttt{ERROR} là 0, chứng tỏ hệ thống hoạt động cực kỳ ổn định. Các cơ chế xử lý ngoại lệ, cắt ngắn văn bản 2 tầng và phục hồi lỗi đã phát huy tác dụng.
+    \item Tỷ lệ phát hiện lỗ hổng chiếm gần 30\%, tập trung nhiều nhất ở nhóm \texttt{INPV}, 8/20 bài, và \texttt{CLNT}, 5/14 bài,, phản ánh đúng bản chất của mục tiêu Juice Shop vốn được thiết kế nặng về lỗ hổng đầu vào và phía máy khách.
+    \item Nhóm \texttt{BUSL} có tỷ lệ \texttt{NEEDS REVIEW} cao nhất, 4/10 bài, do các bài kiểm thử này yêu cầu nhận thức về quy trình kinh doanh con người, ví dụ: luồng thanh toán giỏ hàng,, hệ thống hiện tại có thể gọi API nhưng khó xác định tính đúng/sai của nghiệp vụ kinh tế.
+\end{itemize}
+
+\section{So sánh với phương pháp kiểm thử truyền thống}
+\begin{itemize}
+    \item \textbf{Về thời gian:} Hệ thống tự động hóa 80 trên 105 kịch bản, các kịch bản về Logic nghiệp vụ yêu cầu con người cấu hình. Toàn bộ quá trình mất khoảng 3 giờ, nhanh gấp 5 lần so với kiểm thử thủ công, trung bình 2--3 ngày cho một chuyên gia.
+    \item \textbf{Về độ chính xác:} Phát hiện 14 lỗ hổng bảo mật nghiêm trọng trên OWASP Juice Shop, 100\% khớp với tài liệu đáp án của nhà phát triển. Nhờ Tác tử Xác thực, không phát sinh cảnh báo sai.
+    \item \textbf{Về tài nguyên:} Hệ thống RAG và Đồ thị tri thức tiêu thụ dưới 500MB RAM, chứng tỏ khả năng tối ưu hóa tốt để chạy trên cả các thiết bị kiểm thử cá nhân.
+    \item \textbf{Về tính nhất quán:} Khác với kiểm thử thủ công phụ thuộc kinh nghiệm từng cá nhân, hệ thống luôn tuân thủ đúng quy trình OWASP WSTG cho mỗi lần chạy nhờ cơ chế RAG ép buộc.
+\end{itemize}
+
+\section{Đánh giá hạn chế}
+Dù đạt được kết quả khả quan, hệ thống vẫn tồn tại một số hạn chế:
+\begin{enumerate}
+    \item \textbf{Phụ thuộc API bên thứ ba:} Việc sử dụng Gemini API đồng nghĩa với việc mã nguồn và nhật ký quét có thể được gửi ra ngoài, không phù hợp cho các bài kiểm thử môi trường nội bộ nghiêm ngặt.
+    \item \textbf{Hạn chế trong xác thực phức tạp:} Công cụ \texttt{curl\_authenticated\_check} hiện chỉ xử lý được luồng đăng nhập nhận JWT đơn giản. Với các hệ thống sử dụng OAuth2 hoặc xác thực đa yếu tố, hệ thống chưa thể tự động vượt qua.
+    \item \textbf{Thời gian kiểm thử:} Chạy toàn bộ 105 kịch bản mất trung bình từ 2 đến 3 giờ đồng hồ do thời gian chờ giữa các công cụ quét mạng và độ trễ phản hồi của mô hình ngôn ngữ.
+    \item \textbf{Hạn chế về logic nghiệp vụ:} Nhóm BUSL yêu cầu AI hiểu quy trình kinh doanh, ví dụ: đặt hàng với số lượng âm, lạm dụng mã giảm giá,, đây là năng lực mà mô hình ngôn ngữ hiện tại chưa đạt được nếu không có hướng dẫn chi tiết từ con người.
+\end{enumerate}

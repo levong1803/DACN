@@ -1,0 +1,86 @@
+\documentclass[a4paper, oneside]{project}
+\usepackage{placeins}
+\usepackage{amsfonts}
+\usepackage{textcomp}
+\usepackage{dblfloatfix}
+\usepackage{subfig}
+\usepackage{lineno}
+\usepackage{amssymb}
+\usepackage{tabularx,booktabs}
+\usepackage{longtable, lipsum}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{lscape}
+\usepackage{caption}
+\usepackage[sorting=nyt]{biblatex}
+\usepackage{makecell}
+\usepackage{csquotes}
+\usepackage{blindtext}
+\usepackage{subfiles} % Chèn các file nhỏ, giúp chia các chapter ra nhiều file hơn
+
+% Config reference
+\addbibresource{ref.bib}
+\DeclarePairedDelimiter\bra{\langle}{\rvert}
+\DeclarePairedDelimiter\ket{\lvert}{\rangle}
+\DeclarePairedDelimiterX\braket[2]{\langle}{\rangle}{#1 \delimsize\vert #2}
+
+
+% Config information
+\upperuniname{ĐẠI HỌC QUỐC GIA THÀNH PHỐ HỒ CHÍ MINH}
+\uniname{TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN}
+\deptname{KHOA MẠNG MÁY TÍNH VÀ TRUYỀN THÔNG}
+\stumajor{KỸ SƯ NGÀNH AN TOÀN THÔNG TIN}
+\title{NGHIÊN CỨU XÂY DỰNG KHUNG THỬ NGHIỆM XÂM NHẬP WEB TỰ ĐỘNG DỰA TRÊN SỰ PHỐI HỢP ĐA TÁC NHÂN THÔNG MINH VÀ BIỂU ĐỒ TRI THỨC ĐỘNG}
+\titleen{AN AUTOMATED WEB PENETRATION TESTING FRAMEWORK BASED ON INTELLIGENT MULTI-AGENT COORDINATION AND DYNAMIC KNOWLEDGE GRAPHS}
+\supervisor{GIẢNG VIÊN HƯỚNG DẪN}
+\supervisorname{ThS. NGÔ KHÁNH KHOA}
+\stunamewithid{LÊ VỌNG - 23521803}
+\reporttime{NĂM 2026}
+\begin{document}
+
+\coverpage
+
+\frontmatter
+\input{chapters/front/thanks}
+\clearpage
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+\input{chapters/front/glossaries}
+
+
+\counterwithin{equation}{section}
+\counterwithin{table}{section}
+\counterwithin{figure}{section}
+\setcounter{secnumdepth}{3}
+\mainmatter
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\input{chapters/main/summary}
+\input{chapters/main/intro}
+
+
+
+% Config page header
+\if @twoside
+  \fancyhead[EL,OR]{\bfseries\nouppercase\rightmark}
+\else
+  \fancyhead[R]{\bfseries\nouppercase\rightmark}
+\fi
+
+% Main chapters
+\input{chapters/main/chapter-1}
+\input{chapters/main/chapter-2}
+\input{chapters/main/chapter-3}
+\input{chapters/main/chapter-4}
+\input{chapters/main/chapter-5}
+
+% Conclusion
+\input{chapters/main/conclusion}
+% Print references
+\printbibliography[heading=bibintoc, title = {Tài liệu tham khảo}]
+\end{document}

@@ -4,6 +4,7 @@ import threading
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
 
 from dotenv import load_dotenv
 
@@ -33,8 +34,9 @@ class Settings(BaseSettings):
     mcp_args_json: str = "[]"
 
     # Supabase (Postgres qua API) — chỉ dùng trên server, không commit key lên git
-    supabase_url: str = ""
-    supabase_service_role_key: str = ""
+    supabase_url: str = Field(default="", env="SUPABASE_URL")
+    supabase_service_role_key: str = Field(default="", env="SUPABASE_SERVICE_ROLE_KEY")
+    multi_agent_enabled: bool = Field(default=False, env="MULTI_AGENT_ENABLED")
 
     @property
     def mcp_args(self) -> list[str]:

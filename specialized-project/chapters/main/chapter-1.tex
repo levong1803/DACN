@@ -1,0 +1,86 @@
+\chapter{Tổng quan}
+
+\section{Tổng quan về kiểm thử xâm nhập ứng dụng Web}
+Kiểm thử xâm nhập là quá trình mô phỏng các cuộc tấn công mạng thực tế nhằm vào một hệ thống máy tính, mạng lưới hoặc ứng dụng để đánh giá mức độ an toàn của chúng. Mục tiêu chính của kiểm thử xâm nhập không chỉ là phát hiện các điểm yếu bảo mật mà còn chứng minh rủi ro thực tế nếu các điểm yếu này bị khai thác thành công bởi tin tặc ác ý.
+
+Khác với đánh giá lỗ hổng chỉ dừng lại ở mức độ rà quét và liệt kê các điểm yếu dựa trên cơ sở dữ liệu đã biết, kiểm thử xâm nhập tiến thêm một bước là thực sự khai thác các lỗ hổng đó. Trong vòng đời phát triển phần mềm an toàn, kiểm thử xâm nhập thường được thực hiện ở giai đoạn kiểm thử trước khi triển khai hoặc thực hiện định kỳ trong giai đoạn vận hành nhằm bảo vệ dữ liệu người dùng và đảm bảo tuân thủ các tiêu chuẩn bảo mật.
+
+Quy trình kiểm thử xâm nhập tiêu chuẩn thường bao gồm 5 giai đoạn chính:
+\begin{enumerate}
+    \item \textbf{Lập kế hoạch và thu thập thông tin:} Xác định phạm vi kiểm thử, mục tiêu và thu thập tối đa thông tin về hệ thống.
+    \item \textbf{Quét lỗ hổng:} Sử dụng các công cụ tự động hoặc bán tự động để xác định các dịch vụ đang chạy, nhận diện phiên bản phần mềm và tìm kiếm các điểm yếu đã biết.
+    \item \textbf{Khai thác:} Tìm cách vượt qua các cơ chế phòng thủ, giành quyền truy cập trái phép hoặc đánh cắp dữ liệu thông qua các lỗ hổng đã phát hiện.
+    \item \textbf{Duy trì quyền truy cập:} Thiết lập các cửa hậu để duy trì sự hiện diện trên hệ thống phục vụ cho các đợt thu thập thông tin sâu hơn.
+    \item \textbf{Báo cáo:} Lập tài liệu chi tiết về các lỗ hổng, mức độ nghiêm trọng và đề xuất các biện pháp khắc phục.
+\end{enumerate}
+
+\section{Bộ tiêu chuẩn OWASP Web Security Testing Guide}
+Tổ chức OWASP là một cộng đồng phi lợi nhuận toàn cầu chuyên nỗ lực cải thiện tính bảo mật của các phần mềm. Nổi tiếng nhất với tài liệu OWASP Top 10, tổ chức này còn ban hành tài liệu hướng dẫn kiểm thử bảo mật ứng dụng Web toàn diện nhất hiện nay là OWASP WSTG.
+
+Phiên bản WSTG v4.2 \cite{owasp2021wstg} bao gồm 105 kịch bản kiểm thử cụ thể, được chia thành 12 nhóm chính tương ứng với các thành phần và giai đoạn tấn công ứng dụng Web:
+\begin{itemize}
+    \item \textbf{Information Gathering, INFO, --- 10 kịch bản:} Thu thập thông tin tình báo, phân tích mã nguồn, dò tìm các file ẩn và điểm rò rỉ dữ liệu.
+    \item \textbf{Configuration and Deployment Management, CONF, --- 13 kịch bản:} Kiểm tra các cấu hình lỗi của máy chủ, kiến trúc mạng và nền tảng ứng dụng.
+    \item \textbf{Identity Management, IDNT, --- 5 kịch bản:} Đánh giá hệ thống cấp phát và quản lý định danh người dùng.
+    \item \textbf{Authentication, ATHN, --- 11 kịch bản:} Kiểm thử các lỗ hổng liên quan đến xác thực, ví dụ: tấn công bạo lực, vượt qua xác thực.
+    \item \textbf{Authorization, ATHZ, --- 5 kịch bản:} Kiểm tra lỗi phân quyền, leo thang đặc quyền ngang và dọc.
+    \item \textbf{Session Management, SESS, --- 10 kịch bản:} Kiểm tra các vấn đề bảo mật của phiên làm việc, mã thông báo Web JSON, cờ cookie.
+    \item \textbf{Input Validation, INPV, --- 20 kịch bản:} Là nhóm lớn nhất, bao gồm kiểm thử các lỗ hổng do thiếu xác thực dữ liệu đầu vào như SQL Injection, Cross-Site Scripting, Command Injection.
+    \item \textbf{Error Handling, ERRH, --- 2 kịch bản:} Kiểm tra xem hệ thống có làm rò rỉ thông tin qua các thông báo lỗi hay không.
+    \item \textbf{Cryptography, CRYP, --- 4 kịch bản:} Đánh giá độ mạnh của các thuật toán mã hóa và việc triển khai Transport Layer Security.
+    \item \textbf{Business Logic, BUSL, --- 10 kịch bản:} Kiểm thử khả năng lạm dụng luồng xử lý nghiệp vụ hợp lệ của ứng dụng.
+    \item \textbf{Client-side, CLNT, --- 14 kịch bản:} Kiểm thử các lỗ hổng khai thác trên trình duyệt người dùng, DOM XSS, CORS.
+    \item \textbf{API Testing, APIT, --- 1 kịch bản:} Kiểm thử đặc thù cho các chuẩn giao tiếp như GraphQL.
+\end{itemize}
+
+Mỗi kịch bản trong tài liệu WSTG được trình bày một cách có hệ thống, bao gồm tóm tắt rủi ro, mục tiêu kiểm thử, và chi tiết các bước kiểm thử. Tính hệ thống và toàn diện của WSTG biến nó thành kim chỉ nam không thể thiếu cho bất kỳ tổ chức hay chuyên gia bảo mật nào.
+
+\section{Các công trình nghiên cứu liên quan}
+Sự kết hợp giữa Trí tuệ Nhân tạo và Kiểm thử bảo mật đang là một chủ đề nghiên cứu thu hút nhiều sự quan tâm. Dưới đây là một số nghiên cứu tiêu biểu liên quan đến đề tài:
+
+\begin{itemize}
+    \item \textbf{VulnBot, 2024,} \cite{vulnbot2024}: Một hệ thống kiểm thử xâm nhập tự trị, sử dụng AI để tự động sinh các lệnh gọi công cụ quét lỗ hổng cơ bản. Tuy nhiên, hệ thống này thiếu sự liên kết tri thức dài hạn, dẫn đến việc phải thực hiện các bước quét dò lặp lại nhiều lần.
+    \item \textbf{PentestGPT, 2023,} \cite{pentestgpt2023}: Giải pháp sử dụng mô hình ngôn ngữ lớn làm người hỗ trợ tương tác với chuyên gia bảo mật. PentestGPT giúp tự động phân tích phản hồi từ công cụ và gợi ý bước đi tiếp theo. Dù vậy, hệ thống này không tự động hóa hoàn toàn mà yêu cầu chuyên gia con người phải thao tác thủ công.
+    \item \textbf{CHAP, 2023,} \cite{chap2023}: Nghiên cứu đề xuất cơ chế luân chuyển ngữ cảnh nhằm duy trì ngữ cảnh cho các tác tử chạy dài hạn, giải quyết phần nào bài toán tràn bộ nhớ. Tuy nhiên, cấu trúc dữ liệu truyền tải vẫn ở dạng văn bản thô, chưa có khả năng mô hình hóa mối quan hệ phức tạp của hệ thống mạng.
+    \item \textbf{Webinject, 2025,} \cite{promptinject2025}: Nghiên cứu công bố bởi Grosse và cộng sự phân tích về các mối đe dọa tiêm nhiễm câu lệnh nhắm vào các tác tử AI được cấp quyền điều khiển trình duyệt hoặc công cụ mạng. Bài báo chỉ ra rằng nếu một AI tự động truy cập vào trang Web chứa mã độc, AI có thể bị đánh lừa để thực thi các tác vụ vượt quyền. Điều này đặt ra yêu cầu cấp thiết về việc giới hạn quyền của từng tác tử.
+\end{itemize}
+
+\subsection{Bảng so sánh các giải pháp hiện tại}
+Để làm nổi bật đóng góp của đồ án, nhóm tác giả tiến hành so sánh hệ thống đề xuất với các phương pháp và công cụ hiện hành như trình bày trong Bảng 1.1.
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3cm}|p{2.5cm}|p{2.5cm}|p{3cm}|p{3cm}|}
+\hline
+\textbf{Tính năng} & \textbf{Công cụ dò quét truyền thống (ZAP, Nikto)} & \textbf{PentestGPT (2023)} & \textbf{VulnBot (2024)} & \textbf{Hệ thống Đề xuất} \\
+\hline
+Tự động hóa hoàn toàn & Có & Không (Cần người) & Có & \textbf{Có} \\
+\hline
+Tuân thủ WSTG v4.2 & Không hoàn toàn & Có (Theo người dùng) & Không & \textbf{Có (RAG tích hợp)} \\
+\hline
+Lưu trữ tri thức dài hạn & Không (Chỉ quét rời rạc) & Hạn chế & Không & \textbf{Có (Đồ thị tri thức động)} \\
+\hline
+Bảo mật quyền thực thi & Không áp dụng & Do con người tự kiểm soát & Yếu (Đơn tác tử) & \textbf{Mạnh (Đa tác tử phân cấp)} \\
+\hline
+\end{tabular}
+\caption{Bảng so sánh hệ thống đề xuất với các giải pháp hiện tại}
+\end{table}
+
+\section{Phân tích hạn chế của các giải pháp hiện có}
+Dựa trên việc khảo sát các nghiên cứu trước đây, đồ án tổng hợp các hạn chế chung của các giải pháp kiểm thử xâm nhập AI hiện hành như sau:
+\begin{itemize}
+    \item \textbf{Thiếu cơ chế tái sử dụng dữ liệu thông minh:} Hầu hết các hệ thống hiện tại tiếp cận kiểm thử một cách rời rạc. Việc một cổng mạng đã được xác định là mở ở bước trước không được tận dụng trực tiếp làm tham số cho một công cụ ở bước sau, gây lãng phí tài nguyên và dễ làm mục tiêu quá tải.
+    \item \textbf{Hiện tượng Ảo giác của AI:} Các mô hình AI đôi khi sẽ tự sáng tạo ra các lỗ hổng không tồn tại do không được cung cấp hướng dẫn học thuật chuẩn hoặc chưa đánh giá đúng phản hồi thực tế từ hệ thống mục tiêu.
+    \item \textbf{Kiến trúc nguyên khối tiềm ẩn rủi ro:} Việc giao mọi công cụ cho một tác tử duy nhất gây ra rủi ro rất lớn. Khi AI rơi vào ảo giác, nó có thể đưa ra quyết định sai lầm, chẳng hạn như vô tình chạy lệnh rà quét phá hoại cơ sở dữ liệu trên môi trường sản xuất thực tế thay vì chỉ trinh sát.
+\end{itemize}
+
+\section{Đề xuất giải pháp}
+Nhằm giải quyết triệt để các hạn chế kể trên, đề tài này đề xuất thiết kế và hiện thực một hệ thống kiểm thử xâm nhập đa tác tử tuân thủ chặt chẽ theo bộ 105 kịch bản của OWASP WSTG v4.2. Khác với các cách tiếp cận truyền thống, hệ thống áp dụng bốn cải tiến công nghệ cốt lõi:
+
+\begin{enumerate}
+    \item \textbf{Cơ chế Retrieval-Augmented Generation:} Trước mỗi kịch bản, hệ thống truy vấn và trích xuất nguyên văn hướng dẫn chuyên môn từ tài liệu WSTG vào chỉ thị của LLM. Kỹ thuật này ép AI tư duy theo chuẩn học thuật chuyên ngành, ngăn chặn hiệu quả hiện tượng ảo giác. Hệ thống RAG còn được tăng cường nhờ khả năng tự động bơm các gợi ý đường dẫn và gợi ý tấn công theo ngữ cảnh công nghệ.
+    \item \textbf{Kiến trúc Đa tác tử:} Hệ thống phá vỡ kiến trúc nguyên khối bằng cách phân tách thành các vai trò chuyên biệt: Tác tử Chỉ huy đóng vai trò lập kế hoạch, Tác tử Trinh sát đảm nhiệm thu thập thông tin, Tác tử Khai thác thực thi tấn công, và Tác tử Xác thực chống dương tính giả. Việc phân tách này giúp cô lập quyền hạn, đảm bảo chỉ Tác tử Khai thác mới được cấp quyền sử dụng các công cụ có tính phá hoại.
+    \item \textbf{Đồ thị tri thức động:} Dữ liệu tình báo thu được từ các bước quét trước đó như danh sách cổng, công nghệ đang chạy và đường dẫn API được tự động phân tách và lưu trữ trong cấu trúc đồ thị. Hệ thống tái sử dụng đồ thị này như một bộ nhớ dài hạn, tạo hiệu ứng quả cầu tuyết giúp AI ngày càng hiểu sâu về mục tiêu qua từng bài kiểm thử.
+    \item \textbf{Kiểm soát thực thi qua Model Context Protocol:} Hệ thống sử dụng kiến trúc cô lập tiến trình. Mọi công cụ kiểm thử như Nmap, SQLMap hay Dirb đều chạy trong một tiến trình con riêng biệt. AI chỉ có quyền gọi các công cụ này thông qua chuẩn giao tiếp MCP được kiểm soát nghiêm ngặt bằng danh sách trắng tên miền và cơ chế cắt ngắn dữ liệu thông minh nhằm bảo vệ vòng đời hoạt động của ứng dụng.
+\end{enumerate}
