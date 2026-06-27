@@ -44,6 +44,7 @@ DACN/
 │   │   └── prompt_logger.py      # Ghi log prompt & tool calls
 │   ├── pentest_mcp_tools.py      # 19 công cụ MCP (Nmap, SQLMap, ZAP...)
 │   ├── supabase_schema.sql       # Schema tạo bảng Vector DB
+│   ├── seed_rag.py               # Script nạp 105 kịch bản vào Vector DB
 │   ├── requirements.txt          # Danh sách thư viện Python
 │   └── .env                      # Biến môi trường (API Keys)
 │
